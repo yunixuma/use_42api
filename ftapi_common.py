@@ -16,7 +16,7 @@ def post_method(endpoint, payload):
         res = requests.request("POST", url, headers=headers, data=payload)
         return res.json()
     except:
-        my.debug_print("Error: Unable to connect to 42 API", DEBUG, "31m")
+        my.debug_print("Error: Unable to connect to 42 API", DEBUG, my.COLOR["ERROR"])
         return None
 
 def get_method(endpoint, payload):

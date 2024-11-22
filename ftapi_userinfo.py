@@ -2,10 +2,11 @@
 
 import sys, os, json
 import urllib3, requests
-import ftapi_common as ftapi
+import my_common as my
+ftapi = my.import_module("ftapi_common", my.DEBUG)
 DEBUG = True
 
-ftapi.my.debug_print(ftapi.ftapi_token.token, DEBUG, "35m")
+my.debug_print(ftapi.ftapi_token.token, DEBUG, my.COLOR["DEBUG"])
 
 FT_UID = os.environ['FT_UID']
 FT_SECRET = os.environ['FT_SECRET']
@@ -20,12 +21,12 @@ data = {
 }
     # 'Authorization' : 'Bearer ' + ftapi_common.ftapi_token.token
     # 'access_token': ftapi_common.ftapi_token.token
-ftapi.my.debug_print(endpoint, DEBUG, "33m")
-ftapi.my.debug_print(str(data), DEBUG, "33m")
+my.debug_print(endpoint, DEBUG, my.COLOR["DEBUG"])
+my.debug_print(str(data), DEBUG, my.COLOR["DEBUG"])
 try:
-    ftapi.my.debug_print("Before requests.post", DEBUG, "36m")
+    my.debug_print("Before requests.post", DEBUG, my.COLOR["INFO"])
     json_data = ftapi.get_method(endpoint, data)
-    ftapi.my.debug_print(str(json_data))
-    ftapi.my.debug_print("After  requests.post", DEBUG, "32m")
+    my.debug_print(str(json_data))
+    my.debug_print("After  requests.post", DEBUG, my.COLOR["SUCCESS"])
 except:
-    ftapi.my.debug_print("Error: Unable to connect to 42 API", DEBUG, "31m")
+    my.debug_print("Error: Unable to connect to 42 API", DEBUG, my.COLOR["ERROR"])

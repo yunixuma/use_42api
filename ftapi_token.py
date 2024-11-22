@@ -29,25 +29,25 @@ payload = {
 }
 
 # try:
-#     ftapi.my.debug_print("Before requests.post", DEBUG, "36m")
+#     ftapi.my.debug_print("Before requests.post", DEBUG, ftapi.my.COLOR["INFO"])
 #     res = requests.post(url, data=data)
-#     ftapi.my.debug_print("After  requests.post", DEBUG, "32m")
+#     ftapi.my.debug_print("After  requests.post", DEBUG, ftapi.my.COLOR["SUCCESS"])
 # except:
-#     ftapi.my.debug_print("Error: Unable to connect to 42 API", DEBUG, "31m")
+#     ftapi.my.debug_print("Error: Unable to connect to 42 API", DEBUG, ftapi.my.COLOR["FAILURE"])
 
 try:
-    ftapi.my.debug_print("Before requests.post", DEBUG, "36m")
+    ftapi.my.debug_print("Before requests.post", DEBUG, ftapi.my.COLOR["INFO"])
     # json_data = res.json()
     json_data = ftapi.post_method(endpoint, payload)
-    ftapi.my.debug_print(json_data)
-    ftapi.my.debug_print("After  requests.post", DEBUG, "32m")
+    ftapi.my.debug_print(str(json_data))
+    ftapi.my.debug_print("After  requests.post", DEBUG, ftapi.my.COLOR["SUCCESS"])
 except:
-    ftapi.my.debug_print("Error: Unable to parse JSON response", DEBUG, "31m")
+    ftapi.my.debug_print("Error: Unable to parse JSON response", DEBUG, ftapi.my.COLOR["FAILURE"])
 
 try:
-    ftapi.my.debug_print("Before extract a token from JSON", DEBUG, "36m")
+    ftapi.my.debug_print("Before extract a token from JSON", DEBUG, ftapi.my.COLOR["INFO"])
     token = json_data['access_token']
     ftapi.my.debug_print(token)
-    ftapi.my.debug_print("After  extract a token from JSON", DEBUG, "32m")
+    ftapi.my.debug_print("After  extract a token from JSON", DEBUG, ftapi.my.COLOR["SUCCESS"])
 except:
-    ftapi.my.debug_print("Error: Unable to parse JSON response", DEBUG, "31m")
+    ftapi.my.debug_print("Error: Unable to parse JSON response", DEBUG, ftapi.my.COLOR["FAILURE"])
