@@ -1,4 +1,5 @@
-import sys, os
+import sys, os, json
+import datetime
 from dotenv import load_dotenv
 
 DEBUG = True
@@ -40,6 +41,7 @@ COLOR = {
     "FAILURE" : ANSI["ESC"] + ANSI["RED"],
     "RESET"   : ANSI["ESC"] + ANSI["RESET"] + ANSI["WHITE"]
 }
+N_INDENT = 2
 
 load_dotenv()
 
@@ -57,3 +59,11 @@ def import_module(mod, flag_debug):
         # If already imported, return the module from sys.modules
         debug_print(mod + " is already imported", flag_debug, COLOR["FAILURE"])
         return sys.modules[mod]
+def get_datetime():
+    return datetime.datetime.now().strftime("%Y%m%d_%H%M")
+def load_json(path):
+    with open(path, 'r') as f:
+        return json.load(f)
+def save_json(data, path):
+    with open(path, 'w') as f:
+        json.dump(data, f, indent=N_INDENT)
