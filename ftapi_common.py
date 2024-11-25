@@ -13,10 +13,12 @@ def post_method(endpoint, payload):
     url = URL_42API + endpoint
     headers = HEADER
     try:
+        my.debug_print("Before POST request", DEBUG, my.COLOR["INFO"])
         res = requests.request("POST", url, headers=headers, data=payload)
+        my.debug_print("After  POST request", DEBUG, my.COLOR["SUCCESS"])
         return res.json()
     except:
-        my.debug_print("Error: Unable to connect to 42 API", DEBUG, my.COLOR["ERROR"])
+        my.debug_print("Error: Unable to connect to 42 API", DEBUG, my.COLOR["FAILURE"])
         return None
 
 def get_method(endpoint, payload):
@@ -26,13 +28,19 @@ def get_method(endpoint, payload):
     # my.debug_print(url)
     # my.debug_print(str(headers))
     # my.debug_print(str(payload))
-    # res = requests.request("GET", url, headers=headers, data=payload)
-    # res = requests.request("GET", url, headers=headers)
-    res = requests.get(url, headers=headers)
-    # my.debug_print(str(res))
-    res.raise_for_status()
-    # my.debug_print(str(res.json()))
-    return res.json()
+    try:
+        my.debug_print("Before GET request", DEBUG, my.COLOR["INFO"])
+        # res = requests.request("GET", url, headers=headers, data=payload)
+        # res = requests.request("GET", url, headers=headers)
+        res = requests.get(url, headers=headers)
+        my.debug_print("After  GET request", DEBUG, my.COLOR["SUCCESS"])
+        # my.debug_print(str(res))
+        res.raise_for_status()
+        # my.debug_print(str(res.json()))
+        return res.json()
+    except:
+        my.debug_print("Error: Unable to connect to 42 API", DEBUG, my.COLOR["FAILURE"])
+        return None
 
 ftapi_token = my.import_module("ftapi_token", DEBUG)
 # if not "ftapi_token" in sys.modules:

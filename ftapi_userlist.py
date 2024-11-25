@@ -23,15 +23,15 @@ data = {
 my.debug_print(endpoint, DEBUG, my.COLOR["DEBUG"])
 my.debug_print(str(data), DEBUG, my.COLOR["DEBUG"])
 try:
-    my.debug_print("Before requests.get", DEBUG, my.COLOR["INFO"])
     json_data = ftapi.get_method(endpoint, data)
     my.debug_print(str(json_data))
-    my.debug_print("After  requests.get", DEBUG, my.COLOR["SUCCESS"])
 except:
-    my.debug_print("Error: Unable to connect to 42 API", DEBUG, my.COLOR["FAILURE"])
+    ftapi.my.debug_print("Exiting on failure", DEBUG, ftapi.my.COLOR["FAILURE"])
+    exit(EXIT_FAILURE)
 try:
     my.debug_print("Before save JSON to file", DEBUG, my.COLOR["INFO"])
     my.save_json(json_data, filepath)
     my.debug_print("After  save JSON to file", DEBUG, my.COLOR["SUCCESS"])
 except:
-    my.debug_print("Error: Unable to save to file", DEBUG, my.COLOR["ERROR"])
+    ftapi.my.debug_print("Exiting on failure", DEBUG, ftapi.my.COLOR["FAILURE"])
+    exit(EXIT_FAILURE)
