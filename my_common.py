@@ -45,8 +45,8 @@ N_INDENT = 2
 
 load_dotenv()
 
-def debug_print(msg, flag = DEBUG, color = COLOR["DEBUG"]):
-    if flag:
+def debug_print(msg, flag_debug = DEBUG, color = COLOR["DEBUG"]):
+    if flag_debug:
         print(color + msg + COLOR["RESET"])
 def import_module(mod, flag_debug):
     if not mod in sys.modules:
@@ -61,9 +61,25 @@ def import_module(mod, flag_debug):
         return sys.modules[mod]
 def get_datetime():
     return datetime.datetime.now().strftime("%Y%m%d_%H%M")
+def mkdir(path, flag_debug = DEBUG):
+    if os.path.exists(path):
+        debug_print("Directory already exists", flag_debug, COLOR["INFO"])
+        return
+    try:
+        debug_print("Before creating directory", flag_debug, COLOR["INFO"])
+        os.makedirs(path)
+        debug_print("After  creating directory", flag_debug, COLOR["SUCCESS"])
+    except:
+        debug_print("Unable to create directory", DEBUG, COLOR["FAILURE"])
+        exit(1)
 def load_json(path):
     with open(path, 'r') as f:
         return json.load(f)
-def save_json(data, path):
-    with open(path, 'w') as f:
-        json.dump(data, f, indent=N_INDENT)
+def save_json(data, path, flag_debug = DEBUG):
+    try:
+        debug_print("Before save JSON to file", flag_debug, COLOR["INFO"])
+        with open(path, 'w') as f:
+            json.dump(data, f, indent=N_INDENT)
+        debug_print("After  save JSON to file", flag_debug, COLOR["SUCCESS"])
+    except:
+        debug_print("Unable to save JSON to file", flag_debug, COLOR["INFO"])

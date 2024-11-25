@@ -5,7 +5,10 @@ import urllib3, requests
 import my_common as my
 ftapi = my.import_module("ftapi_common", my.DEBUG)
 DEBUG = True
-PATH_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+data_dir = BASE_DIR + "/data/userinfo"
+my.mkdir(data_dir, DEBUG)
+
 my.debug_print(ftapi.ftapi_token.token, DEBUG, my.COLOR["DEBUG"])
 
 if len(sys.argv) < 2:
@@ -14,7 +17,7 @@ else:
     login = sys.argv[1]
 datetime = my.get_datetime()
 filepath = login + "_" + datetime + ".json"
-filepath = PATH_DIR + "/" + filepath
+filepath = data_dir + "/" + filepath
 my.debug_print(filepath, DEBUG, my.COLOR["DEBUG"])
 
 endpoint = '/v2/users/' + login
