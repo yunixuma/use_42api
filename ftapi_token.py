@@ -2,9 +2,10 @@
 
 import sys, os, json
 import urllib3, requests
+import my_common as my
 # var = globals()
 DEBUG = True
-import ftapi_common as ftapi
+ftapi = my.import_module("ftapi_common", my.DEBUG)
 # if not "ftapi_common" in sys.modules:
 #     print("ftapi_common is not imported")
 #     import ftapi_common
@@ -14,8 +15,8 @@ import ftapi_common as ftapi
 #     ftapi_common = sys.modules["ftapi_common"]
 # ftapi_vars = ftapi_common.import_module("ftapi_vars", DEBUG)
 
-# ftapi.my.debug_print(ftapi_vars.FT_UID)
-# ftapi.my.debug_print(ftapi_vars.FT_SECRET)
+# my.debug_print(ftapi_vars.FT_UID)
+# my.debug_print(ftapi_vars.FT_SECRET)
 FT_UID = os.environ['FT_UID']
 FT_SECRET = os.environ['FT_SECRET']
 
@@ -29,23 +30,23 @@ payload = {
 }
 
 # try:
-#     ftapi.my.debug_print("Before requests.post", DEBUG, ftapi.my.COLOR["INFO"])
+#     my.debug_print("Before requests.post", DEBUG, my.COLOR["INFO"])
 #     res = requests.post(url, data=data)
-#     ftapi.my.debug_print("After  requests.post", DEBUG, ftapi.my.COLOR["SUCCESS"])
+#     my.debug_print("After  requests.post", DEBUG, my.COLOR["SUCCESS"])
 # except:
-#     ftapi.my.debug_print("Error: Unable to connect to 42 API", DEBUG, ftapi.my.COLOR["FAILURE"])
+#     my.debug_print("Error: Unable to connect to 42 API", DEBUG, my.COLOR["FAILURE"])
 
 try:
     # json_data = res.json()
     json_data = ftapi.post_method(endpoint, payload)
-    ftapi.my.debug_print(str(json_data))
+    my.debug_print(str(json_data))
 except:
-    ftapi.my.debug_print("Exiting on failure", DEBUG, ftapi.my.COLOR["FAILURE"])
+    my.debug_print("Exiting on failure", DEBUG, my.COLOR["FAILURE"])
     sys.exit(1)
 
 try:
     token = json_data['access_token']
-    ftapi.my.debug_print(token)
+    my.debug_print(token)
 except:
-    ftapi.my.debug_print("Exiting on failure", DEBUG, ftapi.my.COLOR["FAILURE"])
+    my.debug_print("Exiting on failure", DEBUG, my.COLOR["FAILURE"])
     sys.exit(1)

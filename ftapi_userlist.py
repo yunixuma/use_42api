@@ -28,10 +28,10 @@ try:
     json_data = ftapi.get_method(endpoint, data)
     my.debug_print(str(json_data))
 except:
-    ftapi.my.debug_print("Exiting on failure", DEBUG, ftapi.my.COLOR["FAILURE"])
+    my.debug_print("Exiting on failure", DEBUG, my.COLOR["FAILURE"])
     exit(1)
 try:
     my.save_json(json_data, filepath)
 except:
-    ftapi.my.debug_print("Exiting on failure", DEBUG, ftapi.my.COLOR["FAILURE"])
+    my.debug_print("Exiting on failure", DEBUG, my.COLOR["FAILURE"])
     exit(1)
