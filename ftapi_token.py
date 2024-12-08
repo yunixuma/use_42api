@@ -26,7 +26,8 @@ endpoint = '/oauth/token'
 payload = {
     'grant_type': 'client_credentials',
     'client_id': FT_UID,
-    'client_secret': FT_SECRET
+    'client_secret': FT_SECRET,
+    'scope': 'projects public'
 }
 
 # try:
