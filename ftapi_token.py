@@ -22,7 +22,7 @@ FT_SECRET = os.environ['FT_SECRET']
 
 # url = 'https://api.intra.42.fr/oauth/token'
 # data  = "grant_type=client_credentials&client_id=" + FT_UID + "&client_secret=" + FT_SECRET
-endpoint = '/oauth/token'
+uri = '/oauth/token'
 payload = {
     'grant_type': 'client_credentials',
     'client_id': FT_UID,
@@ -39,7 +39,7 @@ payload = {
 
 try:
     # json_data = res.json()
-    json_data = ftapi.post_method(endpoint, payload)
+    json_data = ftapi.post_method(uri, payload)
     my.debug_print(str(json_data))
 except:
     my.debug_print("Exiting on failure", DEBUG, my.COLOR["FAILURE"])

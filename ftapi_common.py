@@ -9,8 +9,8 @@ HEADER = {
     'Content-Type': 'application/x-www-form-urlencoded'
 }
 
-def post_method(endpoint, payload, flag_debug = DEBUG):
-    url = URL_42API + endpoint
+def post_method(uri, payload, flag_debug = DEBUG):
+    url = URL_42API + uri
     headers = HEADER
     try:
         my.debug_print("Before POST request", flag_debug, my.COLOR["INFO"])
@@ -21,8 +21,8 @@ def post_method(endpoint, payload, flag_debug = DEBUG):
         my.debug_print("Error: Unable to connect to 42 API", flag_debug, my.COLOR["FAILURE"])
         return None
 
-def get_method(endpoint, payload, flag_debug = DEBUG):
-    url = URL_42API + endpoint
+def get_method(uri, payload, flag_debug = DEBUG):
+    url = URL_42API + uri
     headers = HEADER
     headers['Authorization'] = payload['Authorization']
     # my.debug_print(url)

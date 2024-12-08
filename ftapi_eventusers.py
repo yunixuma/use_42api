@@ -6,22 +6,22 @@ import my_common as my
 DEBUG = True
 ftapi = my.import_module("ftapi_common", DEBUG)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-data_dir = BASE_DIR + "/data/slot"
+data_dir = BASE_DIR + "/data/eventusers"
 my.mkdir(data_dir, DEBUG)
 
 my.debug_print(ftapi.ftapi_token.token, DEBUG, my.COLOR["DEBUG"])
 
 if len(sys.argv) < 2:
-    login = "ylinux"
+    event_id = "28242"
 else:
-    login = sys.argv[1]
+    event_id = sys.argv[1]
 datetime = my.get_datetime()
-filepath = login + "_slot_" + datetime + ".json"
+filepath = "event_" + event_id + '_' + datetime + ".json"
 filepath = data_dir + "/" + filepath
 my.debug_print(filepath, DEBUG, my.COLOR["DEBUG"])
 
 # uri = '/v2/me/slots'
-uri = '/v2/users/' + login + '/slots'
+uri = '/v2/events/' + event_id + '/events_users'
 data = {
     'Authorization' : 'Bearer ' + ftapi.ftapi_token.token
 }

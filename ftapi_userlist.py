@@ -24,10 +24,10 @@ data = {
 my.debug_print(str(data), DEBUG, my.COLOR["DEBUG"])
 json_data_joined = []
 for idx_page in range(1, 100):
-    endpoint = f"/v2/campus/{campus_no}/users?page[number]={idx_page}&page[size]=100"
-    my.debug_print(endpoint, DEBUG, my.COLOR["DEBUG"])
+    uri = f"/v2/campus/{campus_no}/users?page[number]={idx_page}&page[size]=100"
+    my.debug_print(uri, DEBUG, my.COLOR["DEBUG"])
     try:
-        json_data = ftapi.get_method(endpoint, data)
+        json_data = ftapi.get_method(uri, data)
         my.debug_print(str(json_data))
     except:
         my.debug_print("Exiting on failure", DEBUG, my.COLOR["FAILURE"])
