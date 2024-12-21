@@ -21,10 +21,10 @@ def post_method(uri, payload, flag_debug = DEBUG):
         my.debug_print("Error: Unable to connect to 42 API", flag_debug, my.COLOR["FAILURE"])
         return None
 
-def get_method(uri, payload, flag_debug = DEBUG):
+def get_method(uri, header, payload = {}, flag_debug = DEBUG):
     url = URL_42API + uri
     headers = HEADER
-    headers['Authorization'] = payload['Authorization']
+    headers['Authorization'] = header['Authorization']
     # my.debug_print(url)
     # my.debug_print(str(headers))
     # my.debug_print(str(payload))
@@ -32,7 +32,7 @@ def get_method(uri, payload, flag_debug = DEBUG):
         my.debug_print("Before GET request", flag_debug, my.COLOR["INFO"])
         # res = requests.request("GET", url, headers=headers, data=payload)
         # res = requests.request("GET", url, headers=headers)
-        res = requests.get(url, headers=headers)
+        res = requests.get(url, headers=headers, data = payload)
         my.debug_print("After  GET request", flag_debug, my.COLOR["SUCCESS"])
         # my.debug_print(str(res))
         res.raise_for_status()

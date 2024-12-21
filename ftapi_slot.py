@@ -22,15 +22,15 @@ my.debug_print(filepath, DEBUG, my.COLOR["DEBUG"])
 
 # uri = '/v2/me/slots'
 uri = '/v2/users/' + login + '/slots'
-data = {
+header = {
     'Authorization' : 'Bearer ' + ftapi.ftapi_token.token
 }
     # 'Authorization' : 'Bearer ' + ftapi_common.ftapi_token.token
     # 'access_token': ftapi_common.ftapi_token.token
 my.debug_print(uri, DEBUG, my.COLOR["DEBUG"])
-my.debug_print(str(data), DEBUG, my.COLOR["DEBUG"])
+my.debug_print(str(header), DEBUG, my.COLOR["DEBUG"])
 try:
-    json_data = ftapi.get_method(uri, data)
+    json_data = ftapi.get_method(uri, header)
     my.debug_print(str(json_data))
 except:
     my.debug_print("Exiting on failure", DEBUG, my.COLOR["FAILURE"])
