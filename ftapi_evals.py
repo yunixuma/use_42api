@@ -32,7 +32,7 @@ for idx_page in range(1, 100):
     except:
         my.debug_print("Exiting on failure", DEBUG, my.COLOR["FAILURE"])
         exit(1)
-    if json_data == None:
+    if json_data == None or len(json_data) == 0:
         break
     json_data_joined += json_data
 try:

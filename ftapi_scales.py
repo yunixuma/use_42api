@@ -6,7 +6,7 @@ import my_common as my
 DEBUG = True
 ftapi = my.import_module("ftapi_common", DEBUG)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-data_dir = BASE_DIR + "/data/userlist"
+data_dir = BASE_DIR + "/data/scales"
 my.mkdir(data_dir, DEBUG)
 
 my.debug_print(ftapi.ftapi_token.token, DEBUG, my.COLOR["DEBUG"])
@@ -14,8 +14,15 @@ my.debug_print(ftapi.ftapi_token.token, DEBUG, my.COLOR["DEBUG"])
 campus_no = 26
 idx_page = 1
 
+if len(sys.argv) < 2:
+    user_id = None
+else:
+    user_id = sys.argv[1]
 datetime = my.get_datetime()
-filepath = "users_" + datetime + ".json"
+if user_id != None:
+    filepath = "scales_" + user_id + "_" + datetime + ".json"
+else:
+    filepath = "scales_" + datetime + ".json"
 filepath = data_dir + "/" + filepath
 
 header = {
@@ -24,7 +31,9 @@ header = {
 my.debug_print(str(header), DEBUG, my.COLOR["DEBUG"])
 json_data_joined = []
 for idx_page in range(1, 100):
-    uri = f"/v2/campus/{campus_no}/users?page[number]={idx_page}&page[size]=100"
+    uri = f"/v2/scale_teams?filter[campus_id]={campus_no}&page[number]={idx_page}&page[size]=100"
+    if user_id != None:
+        uri += f"&filter[user_id]={user_id}"
     my.debug_print(uri, DEBUG, my.COLOR["DEBUG"])
     try:
         json_data = ftapi.get_method(uri, header)
