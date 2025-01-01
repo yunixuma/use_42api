@@ -24,26 +24,27 @@ filepath = "events_" + campus_id + '_' + datetime + ".json"
 filepath = data_dir + "/" + filepath
 my.debug_print(filepath, DEBUG, my.COLOR["DEBUG"])
 
-# uri = '/v2/me/slots'
-uri = '/v2/campus/' + campus_id + '/cursus/' + cursus_id + '/events'
 header = {
     'Authorization' : 'Bearer ' + ftapi.ftapi_token.token
 }
     # 'Authorization' : 'Bearer ' + ftapi_common.ftapi_token.token
     # 'access_token': ftapi_common.ftapi_token.token
-my.debug_print(uri, DEBUG, my.COLOR["DEBUG"])
 my.debug_print(str(header), DEBUG, my.COLOR["DEBUG"])
+json_data_joined = []
+for idx_page in range(1, 200):
+    uri = f"/v2/campus/{campus_id}/cursus/{cursus_id}/events?page[number]={idx_page}&page[size]=100"
+    my.debug_print(uri, DEBUG, my.COLOR["DEBUG"])
+    try:
+        json_data = ftapi.get_method(uri, header)
+        my.debug_print(str(json_data))
+    except:
+        my.debug_print("Exiting on failure", DEBUG, my.COLOR["FAILURE"])
+        exit(1)
+    if json_data == None or len(json_data) == 0:
+        break
+    json_data_joined += json_data
 try:
-    json_data = ftapi.get_method(uri, header)
-    my.debug_print(str(json_data))
-except:
-    my.debug_print("Exiting on failure", DEBUG, my.COLOR["FAILURE"])
-    sys.exit(1)
-if json_data == None:
-    my.debug_print("Error: No data", DEBUG, my.COLOR["ERROR"])
-    sys.exit(1)
-try:
-    my.save_json(json_data, filepath)
+    my.save_json(json_data_joined, filepath)
 except:
     my.debug_print("Exiting on failure", DEBUG, my.COLOR["FAILURE"])
     sys.exit(1)
