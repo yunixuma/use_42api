@@ -60,7 +60,7 @@ def import_module(mod, flag_debug):
         debug_print(mod + " is already imported", flag_debug, COLOR["FAILURE"])
         return sys.modules[mod]
 def get_datetime():
-    return datetime.datetime.now().strftime("%Y%m%d_%H%M")
+    return datetime.datetime.now().strftime("%Y%m%dT%H%M")
 def mkdir(path, flag_debug = DEBUG):
     if os.path.exists(path):
         debug_print("Directory already exists", flag_debug, COLOR["INFO"])
