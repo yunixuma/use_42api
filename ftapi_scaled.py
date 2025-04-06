@@ -30,7 +30,7 @@ header = {
 }
 my.debug_print(str(header), DEBUG, my.COLOR["DEBUG"])
 json_data_joined = []
-for idx_page in range(1, 100):
+for idx_page in range(1, 500):
     uri = f"/v2/users/{user_id}/scale_teams/as_corrected?page[number]={idx_page}&page[size]=100"
     my.debug_print(uri, DEBUG, my.COLOR["DEBUG"])
     try:

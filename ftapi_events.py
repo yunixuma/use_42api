@@ -11,16 +11,16 @@ my.mkdir(data_dir, DEBUG)
 
 my.debug_print(ftapi.ftapi_token.token, DEBUG, my.COLOR["DEBUG"])
 
-if len(sys.argv) < 2:
+if len(sys.argv) < 3:
     campus_id = "26"
 else:
-    campus_id = sys.argv[1]
-if len(sys.argv) < 3:
+    campus_id = sys.argv[2]
+if len(sys.argv) < 2:
     cursus_id = "21"
 else:
-    cursus_id = sys.argv[2]
+    cursus_id = sys.argv[1]
 datetime = my.get_datetime()
-filepath = "events_" + campus_id + '_' + datetime + ".json"
+filepath = "events_" + campus_id + '-' + cursus_id + '_' + datetime + ".json"
 filepath = data_dir + "/" + filepath
 my.debug_print(filepath, DEBUG, my.COLOR["DEBUG"])
 

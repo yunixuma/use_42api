@@ -30,7 +30,7 @@ header = {
 }
 my.debug_print(str(header), DEBUG, my.COLOR["DEBUG"])
 json_data_joined = []
-for idx_page in range(1, 100):
+for idx_page in range(1, 500):
     uri = f"/v2/scale_teams?filter[campus_id]={campus_no}&page[number]={idx_page}&page[size]=100"
     if user_id != None:
         uri += f"&filter[user_id]={user_id}"
