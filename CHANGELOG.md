@@ -1,5 +1,14 @@
 # Change Log
 
+## 2025-01-18  v0.5.1
+### added
+- collecting balance of points in the pool
+- collecting pools history
+- collecting project sessions
+### changed
+- collecting scaled by other and scale other student history
+- history of events the specified user attended
+
 ## 2025-01-18  v0.5.0
 ### added
 - CHANGELOG
