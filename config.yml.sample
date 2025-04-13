@@ -1,0 +1,14 @@
+---
+intra:
+  v2:
+    client: "u-s4t2ud-****************************************************************" # UID v2
+    secret: "s-s4t2ud-****************************************************************" # Secret v2
+    uri: "https://api.intra.42.fr/v2/oauth/token" # Token URL v2
+    endpoint: "https://api.intra.42.fr/v2" # API URL v2
+    scopes: "" # Scopes v2
+  v3:
+    client: "" # UID v3
+    secret: "" # Secret v3
+    login: "" # Intra login
+    password: "" # Intra password
+    uri: 'https://auth.42.fr/auth/realms/staff-42/protocol/openid-connect/token' # Token URL v3
