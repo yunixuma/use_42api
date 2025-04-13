@@ -164,3 +164,7 @@ cython_debug/
 # data files
 *.json
 *.csv
+
+# config files for api42lib
+*.yml
+*.yaml
