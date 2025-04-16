@@ -1,5 +1,5 @@
 from api42lib import IntraAPIClient
-import datetime
+import datetime, math
 
 ic = IntraAPIClient(config_path="./config.yml")
 var = {
@@ -65,15 +65,17 @@ quests = ic.pages_threaded("quests")
 for quest_name in var["quest"]:
     for quest in quests:
         if quest["internal_name"] == quest_name:
-            quest_ids += quest["id"]
+            quest_ids += [quest["id"]]
             break
 
 bh_low = datetime.datetime.now() + datetime.timedelta(days=-1)
-bh_high = bh_low + datetime.timedelta(days=+7)
+bh_high = bh_low + datetime.timedelta(days=+14)
+kickoff_low = "2024-10-01T00:00:00Z"
+kickoff_high = "2024-12-31T23:59:59Z"
 
 params = {
     "filter[campus_id]": campus_id,
-    "range[begin_at]": "2024-10-01T00:00:00Z,2028-09-30T23:59:59Z",
+    "range[begin_at]": f"{kickoff_low},{kickoff_high}",
     "filter[end_at]": None,
     "sort": "blackholed_at",
 }
@@ -82,8 +84,10 @@ criticalusers = ""
 users = ic.pages_threaded("cursus/" + str(cursus_id) + "/cursus_users", params=params)
 for user in users:
     user_id = user["user"]["id"]
-    print(user["user"]["login"] + "\t" + str(user["level"]) + "\t" + str(user["blackholed_at"]))
+    # print(user["user"]["login"] + "\t" + str(user["level"]) + "\t" + str(user["blackholed_at"]))
     milestone = 0
+    xp = 0
+    bh = "1970-01-01T00:00:00Z"
     try:
         userquests = ic.pages_threaded("users/" + str(user_id) + "/quests_users")
         if userquests == None or len(userquests) == 0:
@@ -92,7 +96,15 @@ for user in users:
             for userquest in userquests:
                 if userquest["quest"]["id"] in quest_ids:
                     milestone += 1
-        user["user"]["level"] = 
+        # user["user"]["level"] = 
+        xp = var["xp"][math.floor(user["level"])]["total"] + (user["level"] - math.floor(user["level"])) * var["xp"][math.ceil(user["level"])]["required"]
+        bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.000Z') - datetime.timedelta(days=+(xp/49980) ** 0.45 * 483)
+        print(user["user"]["login"] + "\t" \
+            + str(milestone) + "\t" \
+            + str(user["level"]) + "\t" \
+            + str(bh) + "\t" \
+            + str(xp) + "\t" \
+            + str(user["blackholed_at"]))
     except Exception as e:
         print("Error: " + str(e))
         continue
