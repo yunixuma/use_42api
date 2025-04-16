@@ -60,11 +60,13 @@ for cursus in cursuses:
         cursus_id = cursus["id"]
         break
 
+quest_ids = []
 quests = ic.pages_threaded("quests")
-for quest in quests:
-    if quest["internal_name"] == "CommonCoreRank01":
-        quest_id = quest["id"]
-        break
+for quest_name in var["quest"]:
+    for quest in quests:
+        if quest["internal_name"] == quest_name:
+            quest_ids += quest["id"]
+            break
 
 bh_low = datetime.datetime.now() + datetime.timedelta(days=-1)
 bh_high = bh_low + datetime.timedelta(days=+7)
@@ -80,22 +82,17 @@ criticalusers = ""
 users = ic.pages_threaded("cursus/" + str(cursus_id) + "/cursus_users", params=params)
 for user in users:
     user_id = user["user"]["id"]
-    # if user["user"]["end_at"] != None:
-    #     continue
+    print(user["user"]["login"] + "\t" + str(user["level"]) + "\t" + str(user["blackholed_at"]))
+    milestone = 0
     try:
         userquests = ic.pages_threaded("users/" + str(user_id) + "/quests_users")
         if userquests == None or len(userquests) == 0:
-            continue
-        for userquest in userquests:
-            if userquest["quest"]["id"] == quest_id:
-                userprojs = ic.pages_threaded("users/" + str(user_id) + "/projects_users")
-                for userproj in userprojs:
-                    if userproj["project"]["id"] == proj_id:
-                        # print(userproj)
-                        if userproj["validated?"] == False:
-                            criticalusers += user["user"]["login"] + "\t" + user["blackholed_at"] + "\t" + userproj["validated_at"] + "\n"
-                    break
-            break
+            milestone = 0
+        else:
+            for userquest in userquests:
+                if userquest["quest"]["id"] in quest_ids:
+                    milestone += 1
+        user["user"]["level"] = 
     except Exception as e:
         print("Error: " + str(e))
         continue
