@@ -1,26 +1,28 @@
 from api42lib import IntraAPIClient
 import datetime
 
+campus_name = "Tokyo"
+cursus_name = "42cursus"
+kickoff_lower = "2024-10-01T00:00:00Z"
+kickoff_upper = "2028-09-30T23:59:59Z"
+
 ic = IntraAPIClient(config_path="./config.yml")
 
-campuses = ic.pages_threaded("campus")
-for campus in campuses:
-    if campus["name"] == "Tokyo":
-        campus_id = campus["id"]
-        break
-
-cursuses = ic.pages_threaded("cursus")
-for cursus in cursuses:
-    if cursus["name"] == "42cursus":
-        cursus_id = cursus["id"]
-        break
-
-bh_high = datetime.datetime.now()
+params = {
+    "filter[name]": campus_name
+}
+campus_id = ic.get("campus", params=params).json()[0].get("id")
 
 params = {
+    "filter[name]": cursus_name
+}
+cursus_id = ic.get("cursus", params=params).json()[0].get("id")
+
+bh_upper = datetime.datetime.now()
+params = {
     "filter[campus_id]": campus_id,
-    "range[begin_at]": "2024-10-01T00:00:00Z,2028-09-30T23:59:59Z",
-    "range[end_at]": f"2024-10-01T00:00:00Z,{bh_high}",
+    "range[begin_at]": f"{kickoff_lower},{kickoff_upper}",
+    "range[end_at]": f"{kickoff_lower},{bh_upper}",
     "sort": "end_at",
 }
 

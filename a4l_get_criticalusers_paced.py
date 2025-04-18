@@ -43,7 +43,7 @@ var = {
 		"CommonCoreRank03",
 		"CommonCoreRank04",
 		"CommonCoreRank05",
-        "CommonCoreRank06"
+        "CommonCoreValidation"
     ],
     "campus_name": "Tokyo",
     "cursus_name": "42cursus",
@@ -51,9 +51,19 @@ var = {
     "kickoff_upper": "2024-12-31T23:59:59Z",
     # "test_user": "ylinux"
 }
-
 bh_lower = datetime.datetime.now() + datetime.timedelta(days=-1)
 bh_upper = bh_lower + datetime.timedelta(days=+15)
+quest_ids = [44,45,46,47,48,49.37]
+
+# quest_ids = []
+# quests = ic.pages_threaded("quests")
+# for quest_name in var["quest"]:
+#     for quest in quests:
+#         # print(quest["internal_name"])
+#         if quest["internal_name"] == quest_name:
+#             quest_ids += [quest["id"]]
+#             print(quest["internal_name"] + "\t" + str(quest["id"]))
+#             break
 
 # campuses = ic.pages_threaded("campus")
 # for campus in campuses:
@@ -74,14 +84,6 @@ params = {
     "filter[name]": var["cursus_name"],
 }
 cursus_id = ic.get("cursus", params=params).json()[0].get("id")
-
-quest_ids = []
-quests = ic.pages_threaded("quests")
-for quest_name in var["quest"]:
-    for quest in quests:
-        if quest["internal_name"] == quest_name:
-            quest_ids += [quest["id"]]
-            break
 
 # user_id = ic.get("users/" + var["test_user"]).json()["id"]
 # params = {

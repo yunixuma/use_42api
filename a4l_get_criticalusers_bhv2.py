@@ -1,34 +1,26 @@
 from api42lib import IntraAPIClient
 import datetime
 
+campus_name = "Tokyo"
+cursus_name = "42cursus"
+bh_lower = datetime.datetime.now() + datetime.timedelta(days=-1)
+bh_upper = bh_lower + datetime.timedelta(days=+8)
 ic = IntraAPIClient(config_path="./config.yml")
 
-campuses = ic.pages_threaded("campus")
-for campus in campuses:
-    # print(campus)
-    # print('Campus name: ' + campus['name'])
-    # print('Campus ID: ' + str(campus['id']))
-    if campus["name"] == "Tokyo":
-        campus_id = campus["id"]
-        break
+params = {
+    "filter[name]": campus_name
+}
+campus_id = ic.get("campus", params=params).json()[0].get("id")
 
-cursuses = ic.pages_threaded("cursus")
-for cursus in cursuses:
-    # print(cursus)
-    # print('Cursus name: ' + cursus['name'])
-    # print('Cursus ID: ' + str(cursus['id']))
-    if cursus["name"] == "42cursus":
-        cursus_id = cursus["id"]
-        break
-# cursus_id = 21
-
-bh_low = datetime.datetime.now() + datetime.timedelta(days=-1)
-bh_high = bh_low + datetime.timedelta(days=+7)
+params = {
+    "filter[name]": cursus_name
+}
+cursus_id = ic.get("cursus", params=params).json()[0].get("id")
 
 params = {
     "filter[campus_id]": campus_id,
     "range[begin_at]": "2019-10-01T00:00:00Z,2024-09-30T23:59:59Z",
-    "range[blackholed_at]": f"{bh_low},{bh_high}",
+    "range[blackholed_at]": f"{bh_lower},{bh_upper}",
     "filter[end_at]": None,
     "sort": "blackholed_at",
     # "filter[cursus_id]": cursus_id,

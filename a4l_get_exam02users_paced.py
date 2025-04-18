@@ -1,40 +1,49 @@
 from api42lib import IntraAPIClient
 import datetime
 
+quest_name = "CommonCoreRank01"
+exam_name = "Exam Rank 02"
+kickoff_lower = "2024-10-01T00:00:00Z"
+kickoff_upper = "2028-09-30T23:59:59Z"
+campus_name = "Tokyo"
+cursus_name = "42cursus"
 ic = IntraAPIClient(config_path="./config.yml")
+quest_id = 45
 
-campuses = ic.pages_threaded("campus")
-for campus in campuses:
-    if campus["name"] == "Tokyo":
-        campus_id = campus["id"]
-        break
+# quests = ic.pages_threaded("quests")
+# for quest in quests:
+#     if quest["internal_name"] == quest_name:
+#         quest_id = quest["id"]
+#         break
 
-cursuses = ic.pages_threaded("cursus")
-for cursus in cursuses:
-    if cursus["name"] == "42cursus":
-        cursus_id = cursus["id"]
-        break
+params = {
+    "filter[name]": campus_name
+}
+campus_id = ic.get("campus", params=params).json()[0].get("id")
 
-quests = ic.pages_threaded("quests")
-for quest in quests:
-    if quest["internal_name"] == "CommonCoreRank01":
-        quest_id = quest["id"]
-        break
+params = {
+    "filter[name]": cursus_name
+}
+cursus_id = ic.get("cursus", params=params).json()[0].get("id")
 
-projs = ic.pages_threaded("cursus/" + str(cursus_id) + "/projects")
-for proj in projs:
-    if proj["name"] == "Exam Rank 02":
-        proj_id = proj["id"]
-        break
+params = {
+    "filter[name]": exam_name
+}
+proj_id = ic.get("cursus/" + str(cursus_id) + "/projects", params=params).json()[0].get("id")
+# projs = ic.pages_threaded("cursus/" + str(cursus_id) + "/projects")
+# for proj in projs:
+#     if proj["name"] == exam_name:
+#         proj_id = proj["id"]
+#         break
 
 bh_low = datetime.datetime.now() + datetime.timedelta(days=-1)
 bh_high = bh_low + datetime.timedelta(days=+7)
 
 params = {
     "filter[campus_id]": campus_id,
-    "range[begin_at]": "2024-10-01T00:00:00Z,2028-09-30T23:59:59Z",
+    "range[begin_at]": f"{kickoff_lower},{kickoff_upper}",
     "filter[end_at]": None,
-    "sort": "blackholed_at",
+    "sort": "-level",
 }
 
 examusers = ""
@@ -54,7 +63,7 @@ for user in users:
                     if userproj["project"]["id"] == proj_id:
                         # print(userproj)
                         if userproj["validated?"] == False:
-                            examusers += user["user"]["login"] + "\t" + user["blackholed_at"] + "\t" + userproj["validated_at"] + "\n"
+                            examusers += user["user"]["login"] + "\t" + str(user["level"]) + "\t" + user["blackholed_at"] + "\n"
                     break
             break
     except Exception as e:
