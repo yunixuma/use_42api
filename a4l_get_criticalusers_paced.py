@@ -3,6 +3,11 @@ import datetime, math
 
 ic = IntraAPIClient(config_path="./config.yml")
 var = {
+    "kickoff_lower": "2024-10-01T00:00:00Z",
+    "kickoff_upper": "2024-12-31T23:59:59Z",
+    "campus_name": "Tokyo",
+    "cursus_name": "42cursus",
+    "test_user": "ylinux",
     "xp": [
         {"required":     0, "total":      0},
         {"required":   462, "total":    462},
@@ -44,12 +49,7 @@ var = {
 		"CommonCoreRank04",
 		"CommonCoreRank05",
         "CommonCoreValidation"
-    ],
-    "campus_name": "Tokyo",
-    "cursus_name": "42cursus",
-    "kickoff_lower": "2024-10-01T00:00:00Z",
-    "kickoff_upper": "2024-12-31T23:59:59Z",
-    # "test_user": "ylinux"
+    ]
 }
 bh_lower = datetime.datetime.now() + datetime.timedelta(days=-1)
 bh_upper = bh_lower + datetime.timedelta(days=+15)
@@ -85,37 +85,42 @@ params = {
 }
 cursus_id = ic.get("cursus", params=params).json()[0].get("id")
 
-# user_id = ic.get("users/" + var["test_user"]).json()["id"]
-# params = {
-#     # "filter[campus_id]": campus_id,
-#     # "filter[cursus_id]": cursus_id,
-#     "filter[user_id]": user_id,
-#     # "range[begin_at]": f'{var["kickoff_lower"]},{var["kickoff_upper"]}',
-#     # "filter[end_at]": None,
-#     # "sort": "blackholed_at",
-# }
-# user = ic.get("cursus/" + str(cursus_id) + "/cursus_users", params=params).json()[0]
-# print(user["user"]["login"] + "\t" + str(user["level"]) + "\t" + str(user["blackholed_at"]))
-# milestone = 0
-# params = {
-#     # "filter[quest_id]": quest_id,
-#     "filter[validated]": "true",
-# }
-# userquests = ic.pages_threaded("users/" + str(user_id) + "/quests_users")
-# if userquests == None or len(userquests) == 0:
-#     milestone = 0
-# else:
-#     for userquest in userquests:
-#         if userquest["quest"]["id"] in quest_ids:
-#             milestone += 1
-# # user["user"]["level"] = 
-# xp = var["xp"][math.floor(user["level"])]["total"] + (user["level"] - math.floor(user["level"])) * var["xp"][math.ceil(user["level"])]["required"]
-# bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.000Z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483) - 77 + var["pace"][milestone]["24"])
-# print(user["user"]["login"] + "\t" \
-#     + str(milestone) + "\t" \
-#     + str(user["level"]) + "\t" \
-#     + str(bh) + "\t" \
-#     + str(xp))
+
+user_id = ic.get("users/" + var["test_user"]).json()["id"]
+params = {
+    # "filter[campus_id]": campus_id,
+    # "filter[cursus_id]": cursus_id,
+    "filter[user_id]": user_id,
+    # "range[begin_at]": f'{var["kickoff_lower"]},{var["kickoff_upper"]}',
+    # "filter[end_at]": None,
+    # "sort": "blackholed_at",
+}
+user = ic.get("cursus/" + str(cursus_id) + "/cursus_users", params=params).json()[0]
+print(user["user"]["login"] + "\t" + str(user["level"]) + "\t" + str(user["blackholed_at"]))
+milestone = 0
+params = {
+    # "filter[quest_id]": quest_id,
+    "filter[validated]": "true",
+}
+userquests = ic.pages_threaded("users/" + str(user_id) + "/quests_users")
+if userquests == None or len(userquests) == 0:
+    milestone = 0
+else:
+    for userquest in userquests:
+        # print(userquest)
+        print(userquest["quest"]["name"] + "\t" + str(userquest.get("validated_at")))
+        if userquest["quest"]["id"] in quest_ids:
+            if userquest.get("validated_at") != None:
+                milestone += 1
+# user["user"]["level"] = 
+xp = var["xp"][math.floor(user["level"])]["total"] + (user["level"] - math.floor(user["level"])) * var["xp"][math.ceil(user["level"])]["required"]
+bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.000Z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483) - 77 + var["pace"][milestone]["24"])
+print(user["user"]["login"] + "\t" \
+    + str(milestone) + "\t" \
+    + str(user["level"]) + "\t" \
+    + str(bh) + "\t" \
+    + str(xp))
+
 
 criticalusers = ""
 params = {
@@ -142,7 +147,8 @@ for user in users:
         else:
             for userquest in userquests:
                 if userquest["quest"]["id"] in quest_ids:
-                    milestone += 1
+                    if userquest.get("validated_at") != None:
+                        milestone += 1
         # user["user"]["level"] = 
         xp = var["xp"][math.floor(user["level"])]["total"] + (user["level"] - math.floor(user["level"])) * var["xp"][math.ceil(user["level"])]["required"]
         bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.000Z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483) - 77 + var["pace"][milestone]["24"])
