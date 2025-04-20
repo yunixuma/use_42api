@@ -1,6 +1,7 @@
 from api42lib import IntraAPIClient
 import datetime
 
+start_at = datetime.datetime.now()
 quest_name = "CommonCoreRank01"
 exam_name = "Exam Rank 02"
 kickoff_lower = "2024-10-01T00:00:00Z"
@@ -70,3 +71,6 @@ for user in users:
         print("Error: " + str(e))
         continue
 print(examusers)
+
+finish_at = datetime.datetime.now()
+print(f"Elapsed time: {finish_at - start_at}")

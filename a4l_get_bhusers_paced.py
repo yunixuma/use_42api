@@ -1,11 +1,11 @@
 from api42lib import IntraAPIClient
 import datetime
 
+start_at = datetime.datetime.now()
 campus_name = "Tokyo"
 cursus_name = "42cursus"
 kickoff_lower = "2024-10-01T00:00:00Z"
 kickoff_upper = "2028-09-30T23:59:59Z"
-
 ic = IntraAPIClient(config_path="./config.yml")
 
 params = {
@@ -29,3 +29,6 @@ params = {
 users = ic.pages_threaded("cursus/" + str(cursus_id) + "/cursus_users", params=params)
 for user in users:
     print(user["user"]["login"] + "\t" + str(user["end_at"]))
+
+finish_at = datetime.datetime.now()
+print(f"Elapsed time: {finish_at - start_at}")

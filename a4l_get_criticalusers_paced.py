@@ -1,12 +1,12 @@
 from api42lib import IntraAPIClient
 import datetime, math
 
-ic = IntraAPIClient(config_path="./config.yml")
+start_at = datetime.datetime.now()
 var = {
     "kickoff_lower": "2024-10-01T00:00:00Z",
     "kickoff_upper": "2024-12-31T23:59:59Z",
-    "campus_name": "Tokyo",
     "cursus_name": "42cursus",
+    "campus_name": "Tokyo",
     "test_user": "",
     "xp": [
         {"required":     0, "total":      0},
@@ -54,7 +54,12 @@ var = {
 }
 bh_lower = datetime.datetime.now().astimezone((datetime.timezone(datetime.timedelta(hours=+9)))) + datetime.timedelta(days=-1)
 bh_upper = bh_lower + datetime.timedelta(days=+15)
+ic = IntraAPIClient(config_path="./config.yml")
+
 quest_ids = [44,45,46,47,48,49.37]
+quest_lookup = {}
+for i in range(len(quest_ids)):
+    quest_lookup[quest_ids[i]] = i + 1
 
 # quest_ids = []
 # quests = ic.pages_threaded("quests")
@@ -131,6 +136,16 @@ if var.get("test_user") != None and var.get("test_user") != "":
         + f"\t{user['user']['wallet']:-4d}\n")
 
 
+user_ms = {}
+params = {
+    "filter[campus_id]": campus_id,
+}
+quests_users = ic.pages_threaded("quests_users", params=params)
+for userquest in quests_users:
+    if userquest["quest"]["id"] in quest_lookup and userquest.get("validated_at") != None:
+        if userquest["user"]["id"] not in user_ms or quest_lookup[userquest["quest"]["id"]] > user_ms[userquest["user"]["id"]]:
+            user_ms[userquest["user"]["id"]] = quest_lookup[userquest["quest"]["id"]]
+
 criticalusers = ""
 params = {
     "filter[campus_id]": campus_id,
@@ -142,20 +157,23 @@ users = ic.pages_threaded("cursus/" + str(cursus_id) + "/cursus_users", params=p
 for user in users:
     user_id = user["user"]["id"]
     # print(user["user"]["login"] + "\t" + str(user["level"]) + "\t" + str(user["blackholed_at"]))
-    milestone = 0
-    xp = 0
-    bh = "1970-01-01T00:00:00Z"
     try:
-        params = {
-            # "filter[quest_id]": quest_id,
-            "filter[validated]": "true",
-        }
-        userquests = ic.pages_threaded("users/" + str(user_id) + "/quests_users")
-        if userquests != None and len(userquests) > 0:
-            for userquest in userquests:
-                for i in range(milestone, len(quest_ids)):
-                    if userquest["quest"]["id"] == quest_ids[i] and userquest.get("validated_at") != None:
-                        milestone = i + 1
+        if user_id in user_ms:
+            milestone = user_ms[user_id]
+        else:
+            milestone = 0
+        xp = 0
+        bh = "1970-01-01T00:00:00Z"
+        # params = {
+        #     # "filter[quest_id]": quest_id,
+        #     "filter[validated]": "true",
+        # }
+        # userquests = ic.pages_threaded("users/" + str(user_id) + "/quests_users")
+        # if userquests != None and len(userquests) > 0:
+        #     for userquest in userquests:
+        #         for i in range(milestone, len(quest_ids)):
+        #             if userquest["quest"]["id"] == quest_ids[i] and userquest.get("validated_at") != None:
+        #                 milestone = i + 1
         xp = var["xp"][math.floor(user["level"])]["total"] + (user["level"] - math.floor(user["level"])) * var["xp"][math.ceil(user["level"])]["required"]
         bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.%f%z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483) - 77 + var["pace"][milestone]["24"])
         bh_jst = bh.astimezone(datetime.timezone(datetime.timedelta(hours=+9)))
@@ -165,8 +183,9 @@ for user in users:
                 + bh_jst.strftime('%Y-%m-%d') \
                 + f"\t+{total_bonus[milestone]:2d}day" \
                 + f"\t{user['user']['wallet']:-4d}\n"
-
     except Exception as e:
-        print("Error: " + str(e))
-        continue
+        print(e)
+        pass
 print(criticalusers)
+finish_at = datetime.datetime.now()
+print(f"Elapsed time: {finish_at - start_at}")
