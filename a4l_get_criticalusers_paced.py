@@ -7,7 +7,7 @@ var = {
     "kickoff_upper": "2024-12-31T23:59:59Z",
     "campus_name": "Tokyo",
     "cursus_name": "42cursus",
-    "test_user": "ylinux",
+    "test_user": "",
     "xp": [
         {"required":     0, "total":      0},
         {"required":   462, "total":    462},
@@ -71,7 +71,7 @@ quest_ids = [44,45,46,47,48,49.37]
 #         campus_id = campus["id"]
 #         break
 params = {
-    "filter[name]": var["campus_name"],
+    "filter[name]": var.get("campus_name"),
 }
 campus_id = ic.get("campus", params=params).json()[0].get("id")
 
@@ -86,40 +86,41 @@ params = {
 cursus_id = ic.get("cursus", params=params).json()[0].get("id")
 
 
-user_id = ic.get("users/" + var["test_user"]).json()["id"]
-params = {
-    # "filter[campus_id]": campus_id,
-    # "filter[cursus_id]": cursus_id,
-    "filter[user_id]": user_id,
-    # "range[begin_at]": f'{var["kickoff_lower"]},{var["kickoff_upper"]}',
-    # "filter[end_at]": None,
-    # "sort": "blackholed_at",
-}
-user = ic.get("cursus/" + str(cursus_id) + "/cursus_users", params=params).json()[0]
-print(user["user"]["login"] + "\t" + str(user["level"]) + "\t" + str(user["blackholed_at"]))
-milestone = 0
-params = {
-    # "filter[quest_id]": quest_id,
-    "filter[validated]": "true",
-}
-userquests = ic.pages_threaded("users/" + str(user_id) + "/quests_users")
-if userquests == None or len(userquests) == 0:
+if var.get("test_user") != None and var.get("test_user") != "":
+    user_id = ic.get("users/" + var["test_user"]).json()["id"]
+    params = {
+        # "filter[campus_id]": campus_id,
+        # "filter[cursus_id]": cursus_id,
+        "filter[user_id]": user_id,
+        # "range[begin_at]": f'{var["kickoff_lower"]},{var["kickoff_upper"]}',
+        # "filter[end_at]": None,
+        # "sort": "blackholed_at",
+    }
+    user = ic.get("cursus/" + str(cursus_id) + "/cursus_users", params=params).json()[0]
+    print(user["user"]["login"] + "\t" + str(user["level"]) + "\t" + str(user["blackholed_at"]))
     milestone = 0
-else:
-    for userquest in userquests:
-        # print(userquest)
-        print(userquest["quest"]["name"] + "\t" + str(userquest.get("validated_at")))
-        if userquest["quest"]["id"] in quest_ids:
-            if userquest.get("validated_at") != None:
-                milestone += 1
-# user["user"]["level"] = 
-xp = var["xp"][math.floor(user["level"])]["total"] + (user["level"] - math.floor(user["level"])) * var["xp"][math.ceil(user["level"])]["required"]
-bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.000Z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483) - 77 + var["pace"][milestone]["24"])
-print(user["user"]["login"] + "\t" \
-    + str(milestone) + "\t" \
-    + str(user["level"]) + "\t" \
-    + str(bh) + "\t" \
-    + str(xp))
+    params = {
+        # "filter[quest_id]": quest_id,
+        "filter[validated]": "true",
+    }
+    userquests = ic.pages_threaded("users/" + str(user_id) + "/quests_users")
+    if userquests == None or len(userquests) == 0:
+        milestone = 0
+    else:
+        for userquest in userquests:
+            # print(userquest)
+            print(userquest["quest"]["name"] + "\t" + str(userquest.get("validated_at")))
+            if userquest["quest"]["id"] in quest_ids:
+                if userquest.get("validated_at") != None:
+                    milestone += 1
+    # user["user"]["level"] = 
+    xp = var["xp"][math.floor(user["level"])]["total"] + (user["level"] - math.floor(user["level"])) * var["xp"][math.ceil(user["level"])]["required"]
+    bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.%f%z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483 + 0.5) - 77 + var["pace"][milestone]["24"])
+    print(user["user"]["login"] + "\t" \
+        + str(milestone) + "\t" \
+        + str(user["level"]) + "\t" \
+        + str(bh.astimezone(datetime.timezone(datetime.timedelta(hours=+9)))) + "\t" \
+        + str(xp))
 
 
 criticalusers = ""

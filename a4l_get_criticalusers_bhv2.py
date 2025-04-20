@@ -31,7 +31,9 @@ users = ic.pages_threaded("cursus/" + str(cursus_id) + "/cursus_users", params=p
 # users = ic.pages_threaded("users", params=params)
 for user in users:
     # print(user)
-    print(user["user"]["login"] + "\t" + str(user["blackholed_at"]))
+    bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.%f%z')
+    print(user["user"]["login"] + "\t" \
+        + str(bh.astimezone(datetime.timezone(datetime.timedelta(hours=+9)))))
     # break
 
 # freezes = ic.pages_threaded("freeze/v2/freezes")
