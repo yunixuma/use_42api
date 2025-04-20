@@ -44,10 +44,11 @@ var = {
     "cursus_name": "42cursus",
     "kickoff_lower": "2020-01-01T00:00:00Z",
     "kickoff_upper": "2024-12-31T23:59:59Z",
-    "test_user": "kanahash"
+    "test_user": ""
 }
-date_lower = datetime.datetime.now() + datetime.timedelta(days=-7)
+date_lower = datetime.datetime.now() + datetime.timedelta(days=-1)
 date_upper = date_lower + datetime.timedelta(days=+8)
+max_rows = 10
 params = {
     "filter[name]": var["campus_name"],
 }
@@ -72,11 +73,13 @@ params = {
 }
 users = ic.pages_threaded("cursus/" + str(cursus_id) + "/cursus_users", params=params)
 for user in users:
+    if var.get("test_user") != None and var.get("test_user") != "" \
+        and user["user"]["login"] != var["test_user"]:
+        continue
     if datetime.datetime.strptime(user["user"]["updated_at"], '%Y-%m-%dT%H:%M:%S.%fZ') < date_lower:
         continue
     user_id = user["user"]["id"]
     print(user["user"]["login"]) 
-    cycle = 0
     try:
         params = {
             "sort": "-id"
@@ -84,16 +87,17 @@ for user in users:
             # "filter[validated]": "true",
         }
         recentpoints = ic.pages_threaded("users/" + str(user_id) + "/correction_point_historics")
-        if recentpoints == None or len(recentpoints) == 0:
-            cycle = 0
+        if recentpoints != None and len(recentpoints) > 0:
+            continue
         else:
+            rows = 0
             for recentpoint in recentpoints:
                 if datetime.datetime.strptime(recentpoint["updated_at"], '%Y-%m-%dT%H:%M:%S.%fZ') < date_lower:
                     continue
                 if recentpoint["reason"] in var["reason"]:
                     continue
-                cycle += 1
-                if cycle > 5:
+                rows += 1
+                if rows > max_rows:
                     break
                 print(recentpoint)
     except Exception as e:

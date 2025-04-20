@@ -51,8 +51,8 @@ var = {
         "CommonCoreValidation"
     ]
 }
-bh_lower = datetime.datetime.now() + datetime.timedelta(days=-1)
-bh_upper = bh_lower + datetime.timedelta(days=+15)
+bh_lower = datetime.datetime.now().astimezone((datetime.timezone(datetime.timedelta(hours=+9)))) + datetime.timedelta(days=-1)
+bh_upper = bh_lower + datetime.timedelta(days=+150)
 quest_ids = [44,45,46,47,48,49.37]
 
 # quest_ids = []
@@ -104,18 +104,17 @@ if var.get("test_user") != None and var.get("test_user") != "":
         "filter[validated]": "true",
     }
     userquests = ic.pages_threaded("users/" + str(user_id) + "/quests_users")
-    if userquests == None or len(userquests) == 0:
-        milestone = 0
-    else:
+    if userquests != None and len(userquests) > 0:
         for userquest in userquests:
             # print(userquest)
             print(userquest["quest"]["name"] + "\t" + str(userquest.get("validated_at")))
-            if userquest["quest"]["id"] in quest_ids:
-                if userquest.get("validated_at") != None:
-                    milestone += 1
+            for i in range(milestone, len(quest_ids)):
+                if userquest["quest"]["id"] == quest_ids[i] and userquest.get("validated_at") != None:
+                    milestone = i + 1
     # user["user"]["level"] = 
     xp = var["xp"][math.floor(user["level"])]["total"] + (user["level"] - math.floor(user["level"])) * var["xp"][math.ceil(user["level"])]["required"]
-    bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.%f%z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483 + 0.5) - 77 + var["pace"][milestone]["24"])
+    bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.%f%z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483) - 77 + var["pace"][milestone]["24"])
+    # if bh_lower < bh < bh_upper:
     print(user["user"]["login"] + "\t" \
         + str(milestone) + "\t" \
         + str(user["level"]) + "\t" \
@@ -143,19 +142,17 @@ for user in users:
             "filter[validated]": "true",
         }
         userquests = ic.pages_threaded("users/" + str(user_id) + "/quests_users")
-        if userquests == None or len(userquests) == 0:
-            milestone = 0
-        else:
+        if userquests != None and len(userquests) > 0:
             for userquest in userquests:
-                if userquest["quest"]["id"] in quest_ids:
-                    if userquest.get("validated_at") != None:
-                        milestone += 1
-        # user["user"]["level"] = 
+                for i in range(milestone, len(quest_ids)):
+                    if userquest["quest"]["id"] == quest_ids[i] and userquest.get("validated_at") != None:
+                        milestone = i + 1
         xp = var["xp"][math.floor(user["level"])]["total"] + (user["level"] - math.floor(user["level"])) * var["xp"][math.ceil(user["level"])]["required"]
-        bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.000Z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483) - 77 + var["pace"][milestone]["24"])
+        bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.%f%z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483) - 77 + var["pace"][milestone]["24"])
         if bh_lower < bh < bh_upper:
             criticalusers += user["user"]["login"] + "\t" + str(milestone) + "\t" \
-                + str(user["level"]) + "\t" + str(bh) + "\n"
+                + str(user["level"]) + "\t" \
+                + str(bh.astimezone(datetime.timezone(datetime.timedelta(hours=+9)))) + "\n"
     except Exception as e:
         print("Error: " + str(e))
         continue
