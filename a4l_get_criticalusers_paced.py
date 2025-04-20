@@ -41,6 +41,7 @@ var = {
 		{"8": 212, "12": 318, "15": 398, "18": 478,  "22": 584, "24": 644},
 		{"8": 244, "12": 365, "15": 457, "18": 548,  "22": 670, "24": 730}
    ],
+   "bonus": [0, 2, 4, 2 ,6, 9, 12],
     "quest": [
 		"CommonCoreRank00",
 		"CommonCoreRank01",
@@ -52,7 +53,7 @@ var = {
     ]
 }
 bh_lower = datetime.datetime.now().astimezone((datetime.timezone(datetime.timedelta(hours=+9)))) + datetime.timedelta(days=-1)
-bh_upper = bh_lower + datetime.timedelta(days=+150)
+bh_upper = bh_lower + datetime.timedelta(days=+15)
 quest_ids = [44,45,46,47,48,49.37]
 
 # quest_ids = []
@@ -64,6 +65,12 @@ quest_ids = [44,45,46,47,48,49.37]
 #             quest_ids += [quest["id"]]
 #             print(quest["internal_name"] + "\t" + str(quest["id"]))
 #             break
+
+total_bonus = []
+for i in range(len(var["bonus"])):
+    total_bonus.append(var["bonus"][i])
+    if i > 0:
+        total_bonus[i] += total_bonus[i - 1]
 
 # campuses = ic.pages_threaded("campus")
 # for campus in campuses:
@@ -115,11 +122,13 @@ if var.get("test_user") != None and var.get("test_user") != "":
     xp = var["xp"][math.floor(user["level"])]["total"] + (user["level"] - math.floor(user["level"])) * var["xp"][math.ceil(user["level"])]["required"]
     bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.%f%z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483) - 77 + var["pace"][milestone]["24"])
     # if bh_lower < bh < bh_upper:
-    print(user["user"]["login"] + "\t" \
-        + str(milestone) + "\t" \
-        + str(user["level"]) + "\t" \
-        + str(bh.astimezone(datetime.timezone(datetime.timedelta(hours=+9)))) + "\t" \
-        + str(xp))
+    bh_jst = bh.astimezone(datetime.timezone(datetime.timedelta(hours=+9)))
+    print(f"{user['user']['login']:8s}\t" \
+        + f"{milestone}\t{xp:-6.0f}\t{user['level']:.2f}\t" \
+        + bh_jst.strftime('%Y-%m-%d') \
+        # + "\t-\t" + (bh_jst + datetime.timedelta(days=+total_bonus[milestone])).strftime('%Y-%m-%d') \
+        + f"\t+{total_bonus[milestone]:2d}day" \
+        + f"\t{user['user']['wallet']:-4d}\n")
 
 
 criticalusers = ""
@@ -149,10 +158,14 @@ for user in users:
                         milestone = i + 1
         xp = var["xp"][math.floor(user["level"])]["total"] + (user["level"] - math.floor(user["level"])) * var["xp"][math.ceil(user["level"])]["required"]
         bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.%f%z') + datetime.timedelta(days = -math.floor((xp/49980) ** 0.45 * 483) - 77 + var["pace"][milestone]["24"])
+        bh_jst = bh.astimezone(datetime.timezone(datetime.timedelta(hours=+9)))
         if bh_lower < bh < bh_upper:
-            criticalusers += user["user"]["login"] + "\t" + str(milestone) + "\t" \
-                + str(user["level"]) + "\t" \
-                + str(bh.astimezone(datetime.timezone(datetime.timedelta(hours=+9)))) + "\n"
+            criticalusers += f"{user['user']['login']:8s}\t" \
+                + f"{milestone}\t{user['level']:.2f}\t" \
+                + bh_jst.strftime('%Y-%m-%d') \
+                + f"\t+{total_bonus[milestone]:2d}day" \
+                + f"\t{user['user']['wallet']:-4d}\n"
+
     except Exception as e:
         print("Error: " + str(e))
         continue
