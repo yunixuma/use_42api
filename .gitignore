@@ -166,5 +166,5 @@ cython_debug/
 *.csv
 
 # config files for api42lib
-*.yml
-*.yaml
+config.yml
+config.yaml

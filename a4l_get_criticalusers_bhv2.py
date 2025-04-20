@@ -1,6 +1,7 @@
 from api42lib import IntraAPIClient
 import datetime
 
+start_at = datetime.datetime.now()
 campus_name = "Tokyo"
 cursus_name = "42cursus"
 bh_lower = datetime.datetime.now() + datetime.timedelta(days=-1)
@@ -31,9 +32,14 @@ users = ic.pages_threaded("cursus/" + str(cursus_id) + "/cursus_users", params=p
 # users = ic.pages_threaded("users", params=params)
 for user in users:
     # print(user)
-    print(user["user"]["login"] + "\t" + str(user["blackholed_at"]))
+    bh = datetime.datetime.strptime(user["blackholed_at"], '%Y-%m-%dT%H:%M:%S.%f%z')
+    print(f"{user['user']['login']:8s}\t{user['level']:.2f}\t" \
+        + bh.strftime('%Y-%m-%d') \
+        + f"\t{user['user']['wallet']:-4d}\n")
     # break
 
 # freezes = ic.pages_threaded("freeze/v2/freezes")
 # for freeze in freezes:
 #     print(freeze["id"])
+finish_at = datetime.datetime.now()
+print(f"Elapsed time: {finish_at - start_at}")
