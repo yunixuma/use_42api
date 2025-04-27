@@ -19,23 +19,23 @@ max_rows = 10
 ic = IntraAPIClient(config_path="./config.yml")
 
 params = {
-    "filter[name]": var["campus_name"],
+    "filter[name]": var['campus_name'],
 }
 campus_id = ic.get("campus", params=params).json()[0].get("id")
 
 # cursuses = ic.pages_threaded("cursus")
 # for cursus in cursuses:
-#     if cursus["name"] == cursus_name:
-#         cursus_id = cursus["id"]
+#     if cursus['name'] == cursus_name:
+#         cursus_id = cursus['id']
 #         break
 params = {
-    "filter[name]": var["cursus_name"],
+    "filter[name]": var['cursus_name'],
 }
 cursus_id = ic.get("cursus", params=params).json()[0].get("id")
 
 params = {
     "filter[campus_id]": campus_id,
-    "range[begin_at]": f'{var["kickoff_lower"]},{var["kickoff_upper"]}',
+    "range[begin_at]": f'{var['kickoff_lower']},{var['kickoff_upper']}',
     # "range[updated_at]": f'{date_lower},{date_upper}',
     "filter[end_at]": None,
     "sort": "-updated_at",
@@ -43,12 +43,12 @@ params = {
 users = ic.pages_threaded("cursus/" + str(cursus_id) + "/cursus_users", params=params)
 for user in users:
     if var.get("test_user") != None and var.get("test_user") != "" \
-        and user["user"]["login"] != var["test_user"]:
+        and user['user']['login'] != var['test_user']:
         continue
-    if datetime.datetime.strptime(user["user"]["updated_at"], '%Y-%m-%dT%H:%M:%S.%fZ') < date_lower:
+    if datetime.datetime.strptime(user['user']['updated_at'], '%Y-%m-%dT%H:%M:%S.%fZ') < date_lower:
         continue
-    user_id = user["user"]["id"]
-    print(user["user"]["login"]) 
+    user_id = user['user']['id']
+    print(user['user']['login']) 
     try:
         params = {
             "sort": "-id"
@@ -61,9 +61,9 @@ for user in users:
         else:
             rows = 0
             for recentpoint in recentpoints:
-                if datetime.datetime.strptime(recentpoint["updated_at"], '%Y-%m-%dT%H:%M:%S.%fZ') < date_lower:
+                if datetime.datetime.strptime(recentpoint['updated_at'], '%Y-%m-%dT%H:%M:%S.%fZ') < date_lower:
                     continue
-                if recentpoint["reason"] in var["reason"]:
+                if recentpoint['reason'] in var['reason']:
                     continue
                 rows += 1
                 if rows > max_rows:

@@ -28,7 +28,7 @@ params = {
 
 users = ic.pages_threaded("cursus/" + str(cursus_id) + "/cursus_users", params=params)
 for user in users:
-    print(user["user"]["login"] + "\t" + str(user["end_at"]))
+    print(user['user']['login'] + "\t" + str(user['end_at']))
 
 finish_at = datetime.datetime.now()
 print(f"Elapsed time: {finish_at - start_at}")
