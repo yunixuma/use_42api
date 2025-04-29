@@ -190,12 +190,15 @@ def get_criticalusers_paced(n_days = 28):
     ret = "```\n" + ret + "```"
     return ret
 
-if __name__ == "__main__":
-    start_at = datetime.datetime.now()
+def wrapper(args) -> str:
     if len(sys.argv) > 1:
         n_days = int(sys.argv[1])
     else:
         n_days = 28
-    print(get_criticalusers_paced(n_days))
+    return get_criticalusers_paced(n_days)
+
+if __name__ == "__main__":
+    start_at = datetime.datetime.now()
+    print(wrapper())
     finish_at = datetime.datetime.now()
     print(f"Elapsed time: {finish_at - start_at}")

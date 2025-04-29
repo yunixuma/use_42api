@@ -33,16 +33,19 @@ def get_login_cluster_recent(hostname = "c", n_days = 1):
     ret = "```\n" + ret + "```"
     return ret
 
-if __name__ == "__main__":
-    start_at = datetime.datetime.now()
-    if len(sys.argv) > 1:
-        hostname = sys.argv[1]
+def wrapper(args) -> str:
+    if len(args) > 1:
+        host = args[1]
     else:
-        hostname = "c"
-    if len(sys.argv) > 2:
-        n_days = int(sys.argv[2])
+        host = "c"
+    if len(args) > 2:
+        n_days = int(args[2])
     else:
         n_days = 1
-    print(get_login_cluster_recent(hostname, n_days))
+    return get_login_cluster_recent(host, n_days)
+
+if __name__ == "__main__":
+    start_at = datetime.datetime.now()
+    print(wrapper(sys.argv))
     finish_at = datetime.datetime.now()
     print(f"Elapsed time: {finish_at - start_at}")

@@ -81,16 +81,19 @@ def get_users_hibernated(n_days = 15, paced = True):
     ret = "```" + ret + "```"
     return ret
 
-if __name__ == "__main__":
-    start_at = datetime.datetime.now()
-    if len(sys.argv) > 1:
-        n_days = int(sys.argv[1])
+def wrapper(args) -> str:
+    if len(args) > 1:
+        n_days = int(args[1])
     else:
         n_days = 15
-    if len(sys.argv) <= 2 or sys.argv[2] == "paced":
+    if len(args) <= 2 or args[2] == "paced":
         paced = True
     else:
         paced = False
-    print(get_users_hibernated(n_days, paced))
+    return get_users_hibernated(n_days, paced)
+
+if __name__ == "__main__":
+    start_at = datetime.datetime.now()
+    print(wrapper(sys.argv))
     finish_at = datetime.datetime.now()
     print(f"Elapsed time: {finish_at - start_at}")

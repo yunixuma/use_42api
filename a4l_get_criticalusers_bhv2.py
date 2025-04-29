@@ -44,12 +44,15 @@ def get_criticalusers_bhv2(n_days = 14):
     ret = "```\n" + ret + "```" 
     return ret
 
-if __name__ == "__main__":
-    start_at = datetime.datetime.now()
-    if len(sys.argv) > 1:
-        n_days = int(sys.argv[1])
+def wrapper(args) -> str:
+    if len(args) > 1:
+        n_days = int(args[1])
     else:
         n_days = 14
-    print(get_criticalusers_bhv2(n_days))
+    return get_criticalusers_bhv2(n_days)
+
+if __name__ == "__main__":
+    start_at = datetime.datetime.now()
+    print(wrapper(sys.argv))
     finish_at = datetime.datetime.now()
     print(f"Elapsed time: {finish_at - start_at}")
