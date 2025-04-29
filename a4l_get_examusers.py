@@ -74,6 +74,14 @@ def get_examusers(rank = 2) -> str:
         if proj_user['validated?'] == True:
             exam_passed_users.append(proj_user['user']['id'])
 
+    ms_users = []
+    params = {
+        "filter[campus_id]": campus_id,
+    }
+    quests_users = ic.pages_threaded("quests/" + str(quest_id) + "/quests_users", params=params)
+    for quest_user in quests_users:
+        if quest_user.get("validated_at") != None:
+            ms_users.append(quest_user['user']['id'])
 
     # bh_low = datetime.datetime.now() + datetime.timedelta(days=-1)
     # bh_high = bh_low + datetime.timedelta(days=+7)
