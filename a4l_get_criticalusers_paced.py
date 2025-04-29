@@ -57,7 +57,7 @@ def get_criticalusers_paced(n_days = 28):
     bh_upper = bh_lower + datetime.timedelta(days= 2 +n_days)
     ic = IntraAPIClient(config_path="./config.yml")
 
-    quest_ids = [44,45,46,47,48,49.37]
+    quest_ids = [44,45,46,47,48,49,37]
     quest_lookup = {}
     for i in range(len(quest_ids)):
         quest_lookup[quest_ids[i]] = i + 1

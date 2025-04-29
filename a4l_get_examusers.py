@@ -29,7 +29,7 @@ def get_examusers(rank = 2) -> str:
         print("Rank must be between 2 and 6")
         return
 
-    quest_ids = [44,45,46,47,48,49.37]
+    quest_ids = [44,45,46,47,48,49,37]
     quest_lookup = {}
     for i in range(len(quest_ids)):
         quest_lookup[quest_ids[i]] = i + 1
