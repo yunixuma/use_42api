@@ -37,7 +37,7 @@ def get_users_hibernated(n_points = 30):
     ret = "login   \tpts\n"
     for user in hit_users:
         ret += f"{user['login']:8s}\t{user['point']:-3d}\n"
-    ret = "```" + ret + "```"
+    ret = "```\n" + ret + "```"
     return ret
 
 def wrapper(args) -> str:
