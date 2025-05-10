@@ -32,7 +32,7 @@ def get_users_hibernated(n_points = 30):
                 "point": user['user'].get('correction_point')
             })
     if len(hit_users) == 0:
-        return "No user found with more than " + str(n_points) + " points."
+        return "No user found with more than " + str(n_points) + " pts."
     hit_users.sort(key=lambda x: x['point'], reverse=True)
     ret = "login   \tpts\n"
     for user in hit_users:
