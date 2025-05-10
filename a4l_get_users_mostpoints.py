@@ -29,14 +29,15 @@ def get_users_hibernated(n_points = 30):
         if user['user'].get('correction_point') > n_points:
             hit_users.append({
                 "login": user['user'].get('login'),
-                "point": user['user'].get('correction_point')
+                "point": user['user'].get('correction_point'),
+                "end_at": user['end_at']
             })
     if len(hit_users) == 0:
         return "No user found with more than " + str(n_points) + " pts."
     hit_users.sort(key=lambda x: x['point'], reverse=True)
-    ret = "login   \tpts\n"
+    ret = "login   \tpts\tend_at\n"
     for user in hit_users:
-        ret += f"{user['login']:8s}\t{user['point']:-3d}\n"
+        ret += f"{user['login']:8s}\t{user['point']:-3d}\t{user['end_at']}\n"
     ret = "```\n" + ret + "```"
     return ret
 
