@@ -4,8 +4,9 @@ import datetime
 
 campus_name = "Tokyo"
 cursus_name = "42cursus"
+initial_pts = 5
 
-def get_users_hibernated(n_points = 30):
+def get_users_hibernated(n_pts = 30):
     ic = IntraAPIClient(config_path="./config.yml")
 
     params = {
@@ -26,15 +27,19 @@ def get_users_hibernated(n_points = 30):
 
     hit_users = []
     for user in users:
-        if user['user'].get('correction_point') > n_points:
+        if (n_pts > initial_pts and user['user'].get('correction_point') > n_pts) \
+            or (n_pts <= initial_pts and user['user'].get('correction_point') < n_pts):
             hit_users.append({
                 "login": user['user'].get('login'),
                 "point": user['user'].get('correction_point'),
                 "end_at": user['end_at']
             })
     if len(hit_users) == 0:
-        return "No user found with more than " + str(n_points) + " pts."
-    hit_users.sort(key=lambda x: x['point'], reverse=True)
+        return "No user found with more than " + str(n_pts) + " pts."
+    if n_pts > initial_pts:
+        hit_users.sort(key=lambda x: x['point'], reverse=True)
+    else:
+        hit_users.sort(key=lambda x: x['point'], reverse=False)
     ret = "login   \tpts\tend_at\n"
     for user in hit_users:
         ret += f"{user['login']:8s}\t{user['point']:-3d}\t{user['end_at']}\n"
@@ -43,10 +48,10 @@ def get_users_hibernated(n_points = 30):
 
 def wrapper(args) -> str:
     if len(args) > 1:
-        n_points = int(args[1])
+        n_pts = int(args[1])
     else:
-        n_points = 30
-    return get_users_hibernated(n_points)
+        n_pts = 30
+    return get_users_hibernated(n_pts)
 
 if __name__ == "__main__":
     start_at = datetime.datetime.now()
