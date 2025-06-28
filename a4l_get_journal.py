@@ -45,14 +45,14 @@ if __name__ == "__main__":
     start_at = datetime.datetime.now()
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    data_dir = BASE_DIR + "/data/evals"
+    data_dir = BASE_DIR + "/data/journal"
     my.mkdir(data_dir, True)
-    datetime = my.get_datetime()
-    filepath = "evals_" + datetime + ".json"
+    date = my.get_datetime()
+    filepath = "journal_" + date + ".json"
     filepath = data_dir + "/" + filepath
 
     ret = wrapper(sys.argv)
-    my.save_json(ret, "./journal.json")
+    my.save_json(ret, filepath)
 
     finish_at = datetime.datetime.now()
     print(f"Elapsed time: {finish_at - start_at}")
