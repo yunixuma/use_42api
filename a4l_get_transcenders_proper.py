@@ -9,7 +9,7 @@ var = {
     "flag_tracen": 0x01,
     "flag_exam06": 0x02,
     "flag_cpc04": 0x04,
-    "test_user": "ykosaka"
+    "test_user": ""
 }
 
 def get_transcenders():
@@ -66,7 +66,7 @@ def get_transcenders():
 
     userlist = list(users.values())
     userlist.sort(key=lambda x: x['validated_at'], reverse=False)
-    ret = "login   \tvalidated_at\n" 
+    ret = "login   \tdate\n" 
     for user in userlist:
         if user['login'] == var['test_user']:
             print(user)
