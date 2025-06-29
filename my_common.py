@@ -61,6 +61,12 @@ def import_module(mod, flag_debug):
         return sys.modules[mod]
 def get_datetime():
     return datetime.datetime.now().strftime("%Y%m%dT%H%M")
+def strptime(s_ts):
+    try:
+        ts = datetime.datetime.strptime(s_ts, "%Y-%m-%dT%H:%M:%S.%fZ")
+    except ValueError:
+        ts = datetime.datetime.strptime(s_ts, "%Y-%m-%dT%H:%M:%SZ")
+    return ts.astimezone(datetime.timezone(datetime.timedelta(hours=+9)))
 def mkdir(path, flag_debug = DEBUG):
     if os.path.exists(path):
         debug_print("Directory already exists", flag_debug, COLOR["INFO"])
