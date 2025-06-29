@@ -12,7 +12,7 @@ var = {
     "test_user": ""
 }
 
-def get_transcenders():
+def get_transcenders(year = None, month = None):
     ic = IntraAPIClient(config_path="./config.yml")
 
     params = {
@@ -42,6 +42,10 @@ def get_transcenders():
     for user in projectusers_exam06:
         # if user['user']['login'] == var['test_user']:
         #     print(user)
+        if year is not None and user['user']['pool_year'] != year:
+            continue
+        if month is not None and my.str_filter(user['user']['pool_month'], month) == None:
+            continue
         if user.get('validated?') == True:
             # validated_at = datetime.datetime.strptime(user.get('marked_at'), "%Y-%m-%dT%H:%M:%S.%fZ")
             # validated_at = validated_at.astimezone((datetime.timezone(datetime.timedelta(hours=+9))))
@@ -90,7 +94,7 @@ def get_transcenders():
     for user in userlist:
         # if user['login'] == var['test_user']:
         #     print(user)
-        if user['flag'] == var['flag_exam06'] | var['flag_tracen'] | var['flag_cpc04']:
+        if user['flag'] == var['flag_tracen'] | var['flag_cpc04']:
             if user.get('begin_at') is None:
                 params = {
                     "filter[cursus_id]": cursus_id,
@@ -106,7 +110,15 @@ def get_transcenders():
     return "```\n" + ret + "```"
 
 def wrapper(args):
-    return get_transcenders()
+    if len(args) > 1:
+        year = args[1]
+    else:
+        year = None
+    if len(args) > 2:
+        month = args[2]
+    else:
+        month = None
+    return get_transcenders(year, month)
 
 if __name__ == "__main__":
     start_at = datetime.datetime.now()
