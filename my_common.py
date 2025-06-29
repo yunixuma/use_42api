@@ -89,3 +89,10 @@ def save_json(data, path, flag_debug = DEBUG):
         debug_print("After  save JSON to file", flag_debug, COLOR["SUCCESS"])
     except:
         debug_print("Unable to save JSON to file", flag_debug, COLOR["INFO"])
+def str_filter(value, condition):
+    # print(value, condition)
+    conds = condition.split(',')
+    for cond in conds:
+        if cond in value:
+            return cond
+    return None
