@@ -1,4 +1,4 @@
-import sys, os, json
+import sys, os, json, csv
 import datetime
 from dotenv import load_dotenv
 
@@ -78,6 +78,23 @@ def mkdir(path, flag_debug = DEBUG):
     except:
         debug_print("Unable to create directory", DEBUG, COLOR["FAILURE"])
         exit(1)
+
+def load_csv(path, flag_debug=DEBUG):
+    """
+    Reads a CSV file and returns its contents as a list of dictionaries (JSON-like).
+    """
+    data = []
+    try:
+        debug_print(f"Opening CSV file: {path}", flag_debug, COLOR["INFO"])
+        with open(path, newline='', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                data.append(row)
+        debug_print("CSV file successfully converted to JSON object", flag_debug, COLOR["SUCCESS"])
+    except Exception as e:
+        debug_print(f"Failed to convert CSV to JSON: {e}", flag_debug, COLOR["FAILURE"])
+    return data
+
 def load_json(path):
     with open(path, 'r') as f:
         return json.load(f)
@@ -96,3 +113,51 @@ def str_filter(value, condition):
         if cond in value:
             return cond
     return None
+def calc_overlap_duration(periods_1, periods_2):
+    periods_1.sort(key=lambda x: x['begin_at'], reverse=False)
+    periods_2.sort(key=lambda x: x['begin_at'], reverse=False)
+    duration = datetime.timedelta(0)
+    i, j = 0, 0
+    while i < len(periods_1) and j < len(periods_2):
+        if periods_1[i]['end_at'] < periods_2[j]['begin_at']:
+            i += 1
+            continue
+        if periods_2[j]['end_at'] < periods_1[i]['begin_at']:
+            j += 1
+            continue
+        begin_at = max(periods_1[i]['begin_at'], periods_2[j]['begin_at'])
+        end_at = min(periods_1[i]['end_at'], periods_2[j]['end_at'])
+        duration += end_at - begin_at
+        if periods_1[i]['end_at'] < periods_2[j]['end_at']:
+            i += 1
+        else:
+            j += 1
+    return duration
+def datetime_normalize(ts):
+    try:
+        dt = datetime.datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S.%f%z")
+    except ValueError as e:
+        debug_print(f"Error: {e}", True, COLOR["FAILURE"])
+        try:
+            dt = datetime.datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S%z")
+        except ValueError as e:
+            debug_print(f"Error: {e}", True, COLOR["FAILURE"])
+            dt = datetime.datetime.strptime(ts, "%Y-%m-%d")
+    except Exception as e:
+            debug_print(f"Error: {e}", True, COLOR["FAILURE"])
+            dt = ts
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=datetime.timezone.utc)
+    else:
+        dt = dt.astimezone(datetime.timezone.utc)
+    return dt
+
+if __name__ == "__main__":
+    ts = "2023-10-01T12:34:56.0+0900"
+    dt = {"ts": datetime_normalize(ts)}
+    print(ts)
+    print(dt)
+    dt2 = {"ts": datetime_normalize(dt["ts"])}
+    dt2["ts"] = dt2["ts"].replace(tzinfo=datetime.timezone.utc)
+    print(dt2)
+    print(dt2["ts"] > dt["ts"])
