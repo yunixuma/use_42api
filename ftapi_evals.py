@@ -14,8 +14,8 @@ my.debug_print(ftapi.ftapi_token.token, DEBUG, my.COLOR["DEBUG"])
 campus_no = 26
 idx_page = 1
 
-datetime = my.get_datetime()
-filepath = "evals_" + datetime + ".json"
+date = my.get_datetime()
+filepath = "evals_" + date + ".json"
 filepath = data_dir + "/" + filepath
 
 header = {

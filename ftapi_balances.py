@@ -15,8 +15,8 @@ if len(sys.argv) < 2:
     pool_id = "45"
 else:
     pool_id = sys.argv[1]
-datetime = my.get_datetime()
-filepath =  "balances_" + pool_id + "_" + datetime + ".json"
+date = my.get_datetime()
+filepath =  "balances_" + pool_id + "_" + date + ".json"
 filepath = data_dir + "/" + filepath
 my.debug_print(filepath, DEBUG, my.COLOR["DEBUG"])
 

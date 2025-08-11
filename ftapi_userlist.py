@@ -31,8 +31,8 @@ else:
     cursus_id = sys.argv[3]
     filepath += "_cursus" + str(cursus_id)
 
-datetime = my.get_datetime()
-filepath += "_" + datetime + ".json"
+date = my.get_datetime()
+filepath += "_" + date + ".json"
 filepath = data_dir + "/" + filepath
 
 header = {

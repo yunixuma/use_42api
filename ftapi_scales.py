@@ -18,11 +18,11 @@ if len(sys.argv) < 2:
     user_id = None
 else:
     user_id = sys.argv[1]
-datetime = my.get_datetime()
+date = my.get_datetime()
 if user_id != None:
-    filepath = "scales_" + user_id + "_" + datetime + ".json"
+    filepath = "scales_" + user_id + "_" + date + ".json"
 else:
-    filepath = "scales_" + datetime + ".json"
+    filepath = "scales_" + date + ".json"
 filepath = data_dir + "/" + filepath
 
 header = {

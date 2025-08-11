@@ -15,8 +15,8 @@ if len(sys.argv) < 2:
     event_id = "28242"
 else:
     event_id = sys.argv[1]
-datetime = my.get_datetime()
-filepath = "event_" + event_id + '_' + datetime + ".json"
+date = my.get_datetime()
+filepath = "event_" + event_id + '_' + date + ".json"
 filepath = data_dir + "/" + filepath
 my.debug_print(filepath, DEBUG, my.COLOR["DEBUG"])
 
