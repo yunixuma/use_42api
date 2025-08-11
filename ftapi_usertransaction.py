@@ -6,21 +6,17 @@ import my_common as my
 DEBUG = True
 ftapi = my.import_module("ftapi_common", DEBUG)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-data_dir = BASE_DIR + "/data/events"
+data_dir = BASE_DIR + "/data/usertransaction"
 my.mkdir(data_dir, DEBUG)
 
 my.debug_print(ftapi.ftapi_token.token, DEBUG, my.COLOR["DEBUG"])
 
-if len(sys.argv) < 3:
-    campus_id = "26"
-else:
-    campus_id = sys.argv[2]
 if len(sys.argv) < 2:
-    cursus_id = "21"
+    login = "ylinux"
 else:
-    cursus_id = sys.argv[1]
+    login = sys.argv[1]
 date = my.get_datetime()
-filepath = "events_" + campus_id + '-' + cursus_id + '_' + date + ".json"
+filepath = login + "_transaction_" + date + ".json"
 filepath = data_dir + "/" + filepath
 my.debug_print(filepath, DEBUG, my.COLOR["DEBUG"])
 
@@ -32,7 +28,7 @@ header = {
 my.debug_print(str(header), DEBUG, my.COLOR["DEBUG"])
 json_data_joined = []
 for idx_page in range(1, 200):
-    uri = f"/v2/campus/{campus_id}/cursus/{cursus_id}/events?page[number]={idx_page}&page[size]=100"
+    uri = f"/v2/users/{login}/transactions?page[number]={idx_page}&page[size]=100"
     my.debug_print(uri, DEBUG, my.COLOR["DEBUG"])
     try:
         json_data = ftapi.get_method(uri, header)

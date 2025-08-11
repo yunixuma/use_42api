@@ -15,8 +15,8 @@ if len(sys.argv) < 2:
     login = "ylinux"
 else:
     login = sys.argv[1]
-datetime = my.get_datetime()
-filepath = login + "_" + datetime + ".json"
+date = my.get_datetime()
+filepath = login + "_" + date + ".json"
 filepath = data_dir + "/" + filepath
 my.debug_print(filepath, DEBUG, my.COLOR["DEBUG"])
 

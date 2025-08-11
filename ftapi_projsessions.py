@@ -19,8 +19,8 @@ if len(sys.argv) < 2:
     cursus_id = "21"
 else:
     cursus_id = sys.argv[1]
-datetime = my.get_datetime()
-filepath = "projsessions_" + campus_id + '-' + cursus_id + '_' + datetime + ".json"
+date = my.get_datetime()
+filepath = "projsessions_" + campus_id + '-' + cursus_id + '_' + date + ".json"
 filepath = data_dir + "/" + filepath
 my.debug_print(filepath, DEBUG, my.COLOR["DEBUG"])
 

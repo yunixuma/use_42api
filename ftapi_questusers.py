@@ -19,8 +19,8 @@ if len(sys.argv) < 3:
     campus_id = "26"
 else:
     campus_id = sys.argv[2]    
-datetime = my.get_datetime()
-filepath = "quest_" + quest_id + '_' + datetime + ".json"
+date = my.get_datetime()
+filepath = "quest_" + quest_id + '_' + date + ".json"
 filepath = data_dir + "/" + filepath
 my.debug_print(filepath, DEBUG, my.COLOR["DEBUG"])
 
