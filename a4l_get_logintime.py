@@ -12,7 +12,7 @@ kickoff_upper = "2028-09-30T23:59:59Z"
 
 def get_logintime(userlist = None, n_days = 1, begin_at_upper = None, m_days = 1):
     if begin_at_upper == None:
-        begin_at_upper = datetime.datetime.now()
+        begin_at_upper = datetime.datetime.now().astimezone(datetime.timezone.utc)
     begin_at_lower = begin_at_upper - datetime.timedelta(days = n_days + m_days)
     ic = IntraAPIClient(config_path="./config.yml")
 
