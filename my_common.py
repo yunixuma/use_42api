@@ -146,11 +146,28 @@ def datetime_normalize(ts):
     except Exception as e:
             debug_print(f"Error: {e}", True, COLOR["FAILURE"])
             dt = ts
-    if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=datetime.timezone.utc)
-    else:
-        dt = dt.astimezone(datetime.timezone.utc)
+    try:
+        if dt == None:
+            return None
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=datetime.timezone.utc)
+        else:
+            dt = dt.astimezone(datetime.timezone.utc)
+    except Exception as e:
+        debug_print(f"Error: {e}", True, COLOR["FAILURE"])
     return dt
+def save_csv(path, data, fieldnames = None, flag_debug = DEBUG):
+    try:
+        debug_print("Before save CSV to file", flag_debug, COLOR["INFO"])
+        with open(path, 'w', newline='', encoding='utf-8') as f:
+            if fieldnames is None and len(data) > 0:
+                fieldnames = list(data[0].keys())
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(data)
+        debug_print("After  save CSV to file", flag_debug, COLOR["SUCCESS"])
+    except Exception as e:
+        debug_print(f"Unable to save CSV to file: {e}", flag_debug, COLOR["FAILURE"])
 
 if __name__ == "__main__":
     ts = "2023-10-01T12:34:56.0+0900"
