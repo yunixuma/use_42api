@@ -15,12 +15,7 @@ def find_newloginname(first, last):
     length = LENGTH
     i = 1
     while True:
-        if len(first) < i:
-            i = 1
-            if num == 1:
-                length -= 1
-            num += 1
-        elif length == i:
+        if len(first) < i or length == i:
             i = 1
             if num == 1:
                 length -= 1
