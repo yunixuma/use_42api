@@ -12,7 +12,7 @@ quest_name = "CommonCoreValidation"
 kickoff_lower = "2020-01-01T00:00:00Z"
 kickoff_upper = "2028-09-30T23:59:59Z"
 
-ClusterEvents = namedtuple('ClusterEvents', ['timestamp', 'is_begin'])
+ClusterEvents = namedtuple('ClusterEvents', ['timestamp', 'is_begin', 'host'])
 
 def get_cluster_population(hostname = "c", n_days = 1, begin_at_upper = None, m_days = 1):
     if begin_at_upper == None:
@@ -27,11 +27,11 @@ def get_cluster_population(hostname = "c", n_days = 1, begin_at_upper = None, m_
             end_at = begin_at_upper
         elif end_at <= begin_at_lower:
             continue
-        clus_events.append(ClusterEvents(end_at, False))
+        clus_events.append(ClusterEvents(end_at, False, location['host']))
         begin_at = my.datetime_normalize(location['begin_at'])
         if begin_at < begin_at_lower:
             begin_at = begin_at_lower
-        clus_events.append(ClusterEvents(begin_at, True))
+        clus_events.append(ClusterEvents(begin_at, True, location['host']))
         
     clus_events.sort(key=lambda x: x.timestamp, reverse=False)
 

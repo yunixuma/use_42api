@@ -26,8 +26,11 @@ def get_locations(n_days = 1, begin_at_upper = None, hostname = None):
         "range[begin_at]": f"{begin_at_lower},{begin_at_upper}"
     }
     if hostname:
-        hostname_upper = hostname + "zz"
-        params["range[host]"] = f"{hostname},{hostname_upper}"
+        if "," in hostname:
+            params["range[host]"] = hostname
+        else:
+            hostname_upper = hostname + "zz"
+            params["range[host]"] = f"{hostname},{hostname_upper}"
     locations = ic.pages_threaded("locations", params=params)
     return locations
 
