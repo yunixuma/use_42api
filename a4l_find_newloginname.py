@@ -9,6 +9,8 @@ import my_common as my
 LENGTH = 8
 
 def find_newloginname(first, last):
+    first = first.lower()
+    last = last.lower()
     ic = IntraAPIClient(config_path="./config.yml")
 
     num = 1
