@@ -169,6 +169,74 @@ def save_csv(path, data, fieldnames = None, flag_debug = DEBUG):
     except Exception as e:
         debug_print(f"Unable to save CSV to file: {e}", flag_debug, COLOR["FAILURE"])
 
+def merge_time_series(ser_1, ser_2, name_1 = None, name_2 = None):
+    mkey_1 = None
+    keys_1 = ser_1[0].keys()
+    for key in keys_1:
+        if datetime_normalize(ser_1[0][key]) is not None:
+            mkey_1 = key
+            break
+    if mkey_1 is None:
+        raise ValueError("No datetime key found in series 1")
+    mkey_2 = None
+    keys_2 = ser_2[0].keys()
+    for key in keys_2:
+        if datetime_normalize(ser_2[0][key]) is not None:
+            mkey_2 = key
+            break
+    if mkey_2 is None:
+        raise ValueError("No datetime key found in series 2")
+
+    ser_1.sort(key=lambda x: x[mkey_1], reverse=False)
+    ser_2.sort(key=lambda x: x[mkey_2], reverse=False)
+
+    if name_1 is not None:
+        name_1 = name_1 + "_"
+    else:
+        name_1 = ""
+    if name_2 is not None:
+        name_2 = name_2 + "_"
+    else:
+        name_2 = ""
+    if name_1 == name_2:
+        for k in keys_1:
+            if k != mkey_1 and k in keys_2:
+                name_1 = "A_" + name_1
+                name_2 = "B_" + name_2
+                break
+
+    i1, i2 = 0, 0
+    ret = []
+    while True:
+        entry = {}
+        if ser_1[i1][mkey_1] <= ser_2[i2][mkey_2]:
+            entry[mkey_1] = ser_1[i1][mkey_1]
+        else:
+            entry[mkey_1] = ser_2[i2][mkey_2]
+        for k in keys_1:
+            if k != mkey_1:
+                entry[f"{name_1}{k}"] = ser_1[i1][k]
+        for k in keys_2:
+            if k != mkey_2:
+                entry[f"{name_2}{k}"] = ser_2[i2][k]
+        ret.append(entry)
+        if ser_1[i1][mkey_1] < ser_2[i2][mkey_2]:
+            i1 += 1
+        elif ser_1[i1][mkey_1] > ser_2[i2][mkey_2]:
+            i2 += 1
+        else:
+            i1 += 1
+            i2 += 1
+
+        if i1 >= len(ser_1) or i2 >= len(ser_2):
+            break
+        if i1 == len(ser_1):
+            i1 -= 1
+        if i2 == len(ser_2):
+            i2 -= 1
+        print(i1, i2)
+    return ret
+
 if __name__ == "__main__":
     ts = "2023-10-01T12:34:56.0+0900"
     dt = {"ts": datetime_normalize(ts)}
