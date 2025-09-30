@@ -43,6 +43,9 @@ COLOR = {
 }
 N_INDENT = 2
 
+S_ERROR = COLOR["ERROR"] + "Error: "
+S_RESET = COLOR["RESET"]
+
 load_dotenv()
 
 def debug_print(msg, flag_debug = DEBUG, color = COLOR["DEBUG"]):
@@ -156,7 +159,7 @@ def datetime_normalize(ts):
     except Exception as e:
         debug_print(f"Error: {e}", True, COLOR["FAILURE"])
     return dt
-def save_csv(path, data, fieldnames = None, flag_debug = DEBUG):
+def save_csv(data, path, fieldnames = None, flag_debug = DEBUG):
     try:
         debug_print("Before save CSV to file", flag_debug, COLOR["INFO"])
         with open(path, 'w', newline='', encoding='utf-8') as f:
@@ -236,6 +239,11 @@ def merge_time_series(ser_1, ser_2, name_1 = None, name_2 = None):
             i2 -= 1
         print(i1, i2)
     return ret
+def perror(msg, prefix = True):
+    if prefix:
+        msg = S_ERROR + str(msg)
+    msg = str(msg) + S_RESET
+    print(msg, file=sys.stderr)
 
 if __name__ == "__main__":
     ts = "2023-10-01T12:34:56.0+0900"
