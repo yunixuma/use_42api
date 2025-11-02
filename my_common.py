@@ -1,5 +1,6 @@
-import sys, os, json, csv
+import sys, os
 import datetime
+# import csv, json, yaml
 from dotenv import load_dotenv
 
 DEBUG = True
@@ -86,22 +87,29 @@ def load_csv(path, flag_debug=DEBUG):
     """
     Reads a CSV file and returns its contents as a list of dictionaries (JSON-like).
     """
+    import_module('csv', DEBUG)
+    import csv
     data = []
     try:
         debug_print(f"Opening CSV file: {path}", flag_debug, COLOR["INFO"])
-        with open(path, newline='', encoding='utf-8') as f:
+        with open(path, newline='', encoding='utf-8-sig') as f:
             reader = csv.DictReader(f)
-            for row in reader:
-                data.append(row)
+            # for row in reader:
+            #     data.append(row)
+            data = list(reader)
         debug_print("CSV file successfully converted to JSON object", flag_debug, COLOR["SUCCESS"])
     except Exception as e:
         debug_print(f"Failed to convert CSV to JSON: {e}", flag_debug, COLOR["FAILURE"])
     return data
 
 def load_json(path):
+    import_module('json', DEBUG)
+    import json
     with open(path, 'r') as f:
         return json.load(f)
 def save_json(data, path, flag_debug = DEBUG):
+    import_module('json', DEBUG)
+    import json
     try:
         debug_print("Before save JSON to file", flag_debug, COLOR["INFO"])
         with open(path, 'w') as f:
@@ -109,6 +117,12 @@ def save_json(data, path, flag_debug = DEBUG):
         debug_print("After  save JSON to file", flag_debug, COLOR["SUCCESS"])
     except:
         debug_print("Unable to save JSON to file", flag_debug, COLOR["INFO"])
+def load_yaml(path):
+    import_module('yaml', DEBUG)
+    import yaml
+    with open(path, 'r', encoding='utf-8') as f:
+        return yaml.safe_load(f)
+
 def str_filter(value, condition):
     # print(value, condition)
     conds = condition.split(',')
@@ -160,6 +174,8 @@ def datetime_normalize(ts):
         debug_print(f"Error: {e}", True, COLOR["FAILURE"])
     return dt
 def save_csv(data, path, fieldnames = None, flag_debug = DEBUG):
+    import_module('csv', DEBUG)
+    import csv
     try:
         debug_print("Before save CSV to file", flag_debug, COLOR["INFO"])
         with open(path, 'w', newline='', encoding='utf-8') as f:
