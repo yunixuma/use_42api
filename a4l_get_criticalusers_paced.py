@@ -2,8 +2,8 @@ from api42lib import IntraAPIClient
 import sys, datetime, math
 
 var = {
-    "kickoff_lower": "2024-10-01T00:00:00Z",
-    "kickoff_upper": "2024-12-31T23:59:59Z",
+    "kickoff_lower": "2025-10-01T00:00:00Z",
+    "kickoff_upper": "2025-12-31T23:59:59Z",
     "cursus_name": "42cursus",
     "campus_name": "Tokyo",
     "test_user": "",
@@ -199,6 +199,6 @@ def wrapper(args) -> str:
 
 if __name__ == "__main__":
     start_at = datetime.datetime.now()
-    print(wrapper())
+    print(wrapper(sys.argv))
     finish_at = datetime.datetime.now()
     print(f"Elapsed time: {finish_at - start_at}")

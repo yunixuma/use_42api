@@ -1,5 +1,6 @@
-import sys, os, json, csv
+import sys, os
 import datetime
+# import csv, json, yaml
 from dotenv import load_dotenv
 
 DEBUG = True
@@ -43,6 +44,9 @@ COLOR = {
 }
 N_INDENT = 2
 
+S_ERROR = COLOR["ERROR"] + "Error: "
+S_RESET = COLOR["RESET"]
+
 load_dotenv()
 
 def debug_print(msg, flag_debug = DEBUG, color = COLOR["DEBUG"]):
@@ -67,6 +71,12 @@ def strptime(s_ts):
     except ValueError:
         ts = datetime.datetime.strptime(s_ts, "%Y-%m-%dT%H:%M:%SZ")
     return ts.astimezone(datetime.timezone(datetime.timedelta(hours=+9)))
+def strftime(ts):
+    try:
+        s_ts = datetime.datetime.strftime(ts, "%Y-%m-%dT%H:%M:%S.%fZ")
+    except ValueError:
+        s_ts = datetime.datetime.strftime(ts, "%Y-%m-%dT%H:%M:%SZ")
+    return s_ts
 def mkdir(path, flag_debug = DEBUG):
     if os.path.exists(path):
         debug_print("Directory already exists", flag_debug, COLOR["INFO"])
@@ -83,22 +93,29 @@ def load_csv(path, flag_debug=DEBUG):
     """
     Reads a CSV file and returns its contents as a list of dictionaries (JSON-like).
     """
+    import_module('csv', DEBUG)
+    import csv
     data = []
     try:
         debug_print(f"Opening CSV file: {path}", flag_debug, COLOR["INFO"])
-        with open(path, newline='', encoding='utf-8') as f:
+        with open(path, newline='', encoding='utf-8-sig') as f:
             reader = csv.DictReader(f)
-            for row in reader:
-                data.append(row)
+            # for row in reader:
+            #     data.append(row)
+            data = list(reader)
         debug_print("CSV file successfully converted to JSON object", flag_debug, COLOR["SUCCESS"])
     except Exception as e:
         debug_print(f"Failed to convert CSV to JSON: {e}", flag_debug, COLOR["FAILURE"])
     return data
 
 def load_json(path):
+    import_module('json', DEBUG)
+    import json
     with open(path, 'r') as f:
         return json.load(f)
 def save_json(data, path, flag_debug = DEBUG):
+    import_module('json', DEBUG)
+    import json
     try:
         debug_print("Before save JSON to file", flag_debug, COLOR["INFO"])
         with open(path, 'w') as f:
@@ -106,6 +123,12 @@ def save_json(data, path, flag_debug = DEBUG):
         debug_print("After  save JSON to file", flag_debug, COLOR["SUCCESS"])
     except:
         debug_print("Unable to save JSON to file", flag_debug, COLOR["INFO"])
+def load_yaml(path):
+    import_module('yaml', DEBUG)
+    import yaml
+    with open(path, 'r', encoding='utf-8') as f:
+        return yaml.safe_load(f)
+
 def str_filter(value, condition):
     # print(value, condition)
     conds = condition.split(',')
@@ -156,7 +179,9 @@ def datetime_normalize(ts):
     except Exception as e:
         debug_print(f"Error: {e}", True, COLOR["FAILURE"])
     return dt
-def save_csv(path, data, fieldnames = None, flag_debug = DEBUG):
+def save_csv(data, path, fieldnames = None, flag_debug = DEBUG):
+    import_module('csv', DEBUG)
+    import csv
     try:
         debug_print("Before save CSV to file", flag_debug, COLOR["INFO"])
         with open(path, 'w', newline='', encoding='utf-8') as f:
@@ -236,6 +261,11 @@ def merge_time_series(ser_1, ser_2, name_1 = None, name_2 = None):
             i2 -= 1
         print(i1, i2)
     return ret
+def perror(msg, prefix = True):
+    if prefix:
+        msg = S_ERROR + str(msg)
+    msg = str(msg) + S_RESET
+    print(msg, file=sys.stderr)
 
 if __name__ == "__main__":
     ts = "2023-10-01T12:34:56.0+0900"
