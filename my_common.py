@@ -119,7 +119,7 @@ def save_json(data, path, flag_debug = DEBUG):
     try:
         debug_print("Before save JSON to file", flag_debug, COLOR["INFO"])
         with open(path, 'w') as f:
-            json.dump(data, f, indent=N_INDENT)
+            json.dump(data, f, indent=N_INDENT, default=strftime)
         debug_print("After  save JSON to file", flag_debug, COLOR["SUCCESS"])
     except:
         debug_print("Unable to save JSON to file", flag_debug, COLOR["INFO"])

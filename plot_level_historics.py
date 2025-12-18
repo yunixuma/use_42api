@@ -1,61 +1,24 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.cm as cm # カラーマップ用
 import random
 from datetime import datetime, timedelta
+import sys
+import my_common as my
 
-def generate_dummy_data_list_structure(num_series=5):
-    """
-    指定された構造のダミーデータを生成する関数
-    構造:
-    {
-      "John": [
-        {"date": "2025-08-25", "level": 4.07},
-        {"date": "2025-11-03", "level": 6.30}
-      ],
-      ...
-    }
-    """
-    data_dict = {}
-    base_date = datetime(2025, 1, 1)
-
-    for i in range(num_series):
-        name = f"User_{i}"
-        user_records_list = []  # リストを用意
-        
-        current_date = base_date + timedelta(days=random.randint(0, 30))
-        current_level = random.uniform(10, 50)
-        num_points = random.randint(16, 30)
-        
-        for _ in range(num_points):
-            # 1レコードを辞書として作成し、リストに追加
-            record = {
-                "date": current_date.strftime('%Y-%m-%d'),
-                "level": round(current_level, 2)
-            }
-            user_records_list.append(record)
-            
-            # 次のデータ作成
-            current_date += timedelta(days=random.randint(1, 8))
-            current_level += random.uniform(-2, 2.5)
-            
-        data_dict[name] = user_records_list
-        
-    return data_dict
-
-def plot_dict_data(data_dict):
+def plot_level_historics(data_dict, save_path=None):
     """
     {Name: [{'date':..., 'level':...}, ...]} 形式のデータを描画する関数
     """
-    plt.figure(figsize=(12, 6))
     
-    # 外側の辞書をループ: name="John", records_list=[{...}, {...}]
+    # --- 前処理: データを整形し、開始日順にソートするためのリストを作成 ---
+    valid_series = []
+
     for name, records_list in data_dict.items():
         dates = []
         levels = []
         
-        # 値（リスト）の中身をループ
         for record in records_list:
-            # キーを指定して取り出す
             date_str = record.get('date')
             level = record.get('level')
 
@@ -63,45 +26,92 @@ def plot_dict_data(data_dict):
                 continue
 
             try:
-                dt = datetime.strptime(date_str, '%Y-%m-%d')
+                dt = my.datetime_normalize(date_str)
                 dates.append(dt)
                 levels.append(level)
             except ValueError:
                 continue
 
         if len(dates) > 0:
-            # 日付順にソート (リスト内の順序がバラバラな場合に備えて)
+            # 日付順にソート
             sorted_data = sorted(zip(dates, levels))
             sorted_dates, sorted_levels = zip(*sorted_data)
+            
+            # ソート用の情報を含めてリストに格納
+            # start_date: その系列の一番古い日付（ソートキー用）
+            valid_series.append({
+                'name': name,
+                'start_date': sorted_dates[0], 
+                'dates': sorted_dates,
+                'levels': sorted_levels
+            })
 
-            plt.plot(
-                sorted_dates, 
-                sorted_levels, 
-                marker='o',       
-                markersize=3,     
-                linestyle='-',    
-                linewidth=1,      
-                alpha=0.4,        
-                color='blue'
-            )
+    # 開始日 (start_date) が早い順（若番）に並び替え
+    valid_series.sort(key=lambda x: x['start_date'])
 
-    # --- 軸・体裁の設定 ---
+    # --- 描画設定 ---
+    
+    # 背景色と文字色の設定
+    fig = plt.figure(figsize=(12, 6))
+    fig.patch.set_facecolor('black') # 外側の背景
+    
     ax = plt.gca()
+    ax.set_facecolor('black')        # グラフ内の背景
+    
+    # 軸・ラベル・枠線の色を灰色に設定
+    gray_color = '#AAAAAA'
+    ax.spines['bottom'].set_color(gray_color)
+    ax.spines['top'].set_color(gray_color) 
+    ax.spines['right'].set_color(gray_color)
+    ax.spines['left'].set_color(gray_color)
+    ax.tick_params(axis='x', colors=gray_color)
+    ax.tick_params(axis='y', colors=gray_color)
+    ax.yaxis.label.set_color(gray_color)
+    ax.xaxis.label.set_color(gray_color)
+    ax.title.set_color(gray_color)
+
+    # --- プロット実行 ---
+    
+    num_series = len(valid_series)
+    
+    # 標本数に応じて色相(hsv)を変化させる
+    # hsvカラーマップを使って、0.0〜1.0の間を標本数で分割する
+    colors = [cm.hsv(i / num_series) for i in range(num_series)]
+
+    for i, series in enumerate(valid_series):
+        plt.plot(
+            series['dates'], 
+            series['levels'], 
+            marker=None,      # マーカー（点）を表示しない
+            linestyle='-',    
+            linewidth=1,      
+            alpha=0.6,        # 線が重なっても見えるように少し透明度を入れる
+            color=colors[i]   # 開始日順に計算した色を適用
+        )
+
+    # --- 軸・体裁の仕上げ ---
+    
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
     plt.gcf().autofmt_xdate()
 
     plt.xlabel("Date")
     plt.ylabel("Level")
-    plt.title(f"Level Variation (List of Dicts Structure, N={len(data_dict)})")
-    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.title(f"Level Variation (Lines only, Ordered by Start Date, N={num_series})")
+    
+    # グリッドも灰色で控えめに
+    plt.grid(True, linestyle='--', alpha=0.3, color=gray_color)
+    
     plt.tight_layout()
-    plt.show()
+    
+    if save_path:
+        # 保存時も背景色を維持する
+        plt.savefig(save_path, facecolor=fig.get_facecolor(), edgecolor='none')
+    else:
+        plt.show()
 
-# --- 実行部分 ---
 if __name__ == "__main__":
-    # 1. 新しい構造のダミーデータを生成
-    # 実際はご自身のデータを使用してください
-    my_data = generate_dummy_data_list_structure(num_series=20) 
-
-    # 2. 描画
-    plot_dict_data(my_data)
+    level_data = my.load_json(sys.argv[1])
+    save_path = None
+    if len(sys.argv) > 2:
+        save_path = sys.argv[2]
+    plot_level_historics(level_data, save_path)
