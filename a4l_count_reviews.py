@@ -64,7 +64,16 @@ def wrapper(args) -> str:
             user_lst = [f.strip() for f in f.readlines()]
     else:
         user_lst = None
-    return get_most_reviewers(n_days, begin_at_upper, user_lst)
+
+    reviewers_tuples = get_most_reviewers(n_days, begin_at_upper, user_lst)
+    if len(args) > 4:
+        reviewers_dicts = [
+            {'login': r[0], 'count': r[1]} for r in reviewers_tuples
+        ]
+        my.save_csv(reviewers_dicts, args[4])
+        return len(reviewers_dicts)
+    else:
+        return reviewers_tuples
 
 if __name__ == "__main__":
     start_at = datetime.datetime.now()
